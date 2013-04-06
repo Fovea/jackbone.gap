@@ -1,0 +1,16 @@
+{
+    "name": "baby-goo",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "underscore":    "latest",
+        "backbone":      "latest",
+        "handlebars":    "latest",
+        "requirejs":     "latest",
+        "qunitjs":       "latest",
+        "stacktrace-js": "latest",
+        "jsdoc-toolkit": "latest",
+        "less":          "latest",
+        "jackbone":      "latest"
+    }
+}

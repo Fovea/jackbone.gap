@@ -1,0 +1,46 @@
+#!/bin/bash
+#
+command=$1
+
+function usage {
+    echo "usage: $0 <command>"
+    echo
+    echo "command in:"
+    echo
+    echo " - init     "
+    echo "            blah."
+    echo
+    echo " - build    "
+    echo "            blah."
+    echo
+    echo " - run      "
+    echo "            blah."
+    echo
+    echo " - archive  "
+    echo "            blah."
+    echo
+    echo " - clean    "
+    echo "            blah."
+    echo
+    echo " - upload   "
+    echo "            blah."
+    echo
+    echo " - version  "
+    echo "            blah."
+    echo
+    echo " - help"
+    echo "            show this help message."
+    echo
+    echo "Type '$0 <command> help' for more help on a specific command"
+    echo
+    exit 1
+}
+
+export PROJECT_PATH="`pwd`"
+cd `dirname $0`
+export JACKBONEGAP_PATH="`pwd`"
+
+script="scripts/$command.sh"
+test -e $script || usage
+
+$script $@
