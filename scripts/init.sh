@@ -22,9 +22,6 @@ test -e package.json || error "package.json not found."
 
 SYSTEM=`uname`
 
-DOWNLOADS_PATH="$PROJECT_PATH/.downloads"
-LIBS_PATH="$PROJECT_PATH/libs"
-JS_LIBS_PATH="$PROJECT_PATH/app/js/libs"
 mkdir -p "$LIBS_PATH"
 mkdir -p "$DOWNLOADS_PATH"
 

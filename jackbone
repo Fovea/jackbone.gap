@@ -1,6 +1,17 @@
 #!/bin/bash
 #
+
 command=$1
+target=$2
+
+function error() {
+    echo
+    echo "[ERROR] $1"
+    echo
+#    uname -a
+#    echo
+    exit  1
+}
 
 function usage {
     echo "usage: $0 <command>"
@@ -8,25 +19,25 @@ function usage {
     echo "command in:"
     echo
     echo " - init     "
-    echo "            blah."
+    echo "            Download dependencies."
     echo
     echo " - build    "
-    echo "            blah."
+    echo "            Compile the project."
     echo
     echo " - run      "
-    echo "            blah."
+    echo "            TODO."
     echo
     echo " - archive  "
-    echo "            blah."
+    echo "            TODO."
     echo
     echo " - clean    "
-    echo "            blah."
+    echo "            TODO."
     echo
     echo " - upload   "
-    echo "            blah."
+    echo "            TODO."
     echo
     echo " - version  "
-    echo "            blah."
+    echo "            Read and adjust version number from your VERSION file."
     echo
     echo " - help"
     echo "            show this help message."
@@ -36,11 +47,34 @@ function usage {
     exit 1
 }
 
+function checkNeededFiles() {
+    test -e $PROJECT_PATH/assets/Default.png || error "assets/Default.png is missing (should be a 2048x2048 image)."
+    test -e $PROJECT_PATH/assets/Icon.png || error "assets/Icon.png is missing (should be a 2048x2048 image)."
+    test -e $PROJECT_PATH/config || error "config file is missing, create one from config-sample in Jackbone.Gap directory."
+    n=`ls -1 $PROJECT_PATH/app/html/ | wc -l`
+    [ $n -gt 0 ] || error "Please add your handlebars templates into app/html (at least one is needed)"
+
+#    if [ "x$target" = "xios" ]; then
+#        test -e $PROJECT_PATH/ios/Info.plist
+#    fi
+}
+
 export PROJECT_PATH="`pwd`"
 cd `dirname $0`
 export JACKBONEGAP_PATH="`pwd`"
 
 script="scripts/$command.sh"
 test -e $script || usage
+
+export DOWNLOADS_PATH="$PROJECT_PATH/.downloads"
+export LIBS_PATH="$PROJECT_PATH/libs"
+export JS_LIBS_PATH="$PROJECT_PATH/app/js/libs"
+
+checkNeededFiles
+. $PROJECT_PATH/config
+
+if [ "x$PROJECT_NAME" = "x" ]; then
+    error "config file should specify a project name."
+fi
 
 $script $@

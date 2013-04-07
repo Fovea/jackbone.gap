@@ -1,24 +1,16 @@
 #!/bin/bash
 
-cd `dirname $0` # Makes sure we're running from the current directory.
-
-function error() {
-    echo
-    echo "[ERROR] $1"
-    echo
-    uname -a
-    echo
-    exit  1
-}
+# Makes sure we're running from the project directory.
+cd $PROJECT_PATH
 
 function usage() {
-    echo "usage: $0 <web|ios|android> <debug|release|testing|www>"
+    echo "usage: jackbone build <web|ios|android> <debug|release|testing|www>"
     exit 1
 }
 
 # Read command line options
-target="$1"
-conf="$2"
+target="$2"
+conf="$3"
 
 if [ "x$target" = "xweb" ]; then
     BUILD_IOS=NO
@@ -35,12 +27,11 @@ fi
 
 BUILD_RELEASE=NO
 if [ "x$conf" = "xdebug" ] ; then
-    BUILD_JS="build-debug.js"
+    BUILD_JS="optimize=none"
 elif [ "x$conf" = "xrelease" ] || [ "x$conf" = "xwww" ]; then
-    BUILD_JS="build-release.js"
+    BUILD_JS="optimize=none"
     BUILD_RELEASE=YES
 elif [ "x$conf" = "xtesting" ]; then
-    BUILD_JS="build-debug.js"
     BUILD_TESTING=YES
 else
     usage
@@ -52,7 +43,7 @@ rm -fr ios/build
 mkdir -p build/tmp
 app/js/libs/handlebars/bin/handlebars app/html/*.html -f build/tmp/templates.js -k each -k if -k unless
 # generate templates.js module using precompiled handlebars
-sed -e '/TEMPLATES/r build/tmp/templates.js' app/js/templates.js.in > app/js/templates.js
+sed -e '/TEMPLATES/r build/tmp/templates.js' $JACKBONEGAP_PATH/js/templates.js.in > app/js/templates.js
 
 # Install platform specific libraries
 if [ x$BUILD_IOS = xYES ]; then
@@ -66,8 +57,8 @@ else
 fi
 
 # Copy version number to Javascript
-VERSION="`./version.sh print`"
-sed -e "s/__VERSION__/$VERSION/" app/js/version.js.in \
+VERSION="`$JACKBONEGAP_PATH/jackbone version print`"
+sed -e "s/__VERSION__/$VERSION/" $JACKBONEGAP_PATH/js/version.js.in \
     | sed "s/__BUILD__/`date`/" \
     | sed "s/__RELEASE__/$BUILD_RELEASE/" \
      > app/js/version.js
@@ -79,12 +70,12 @@ if [ x$BUILD_RELEASE == xYES ]; then
     LESS_OPTIONS="--yui-compress"
 fi
 
-( node app/js/libs/requirejs/bin/r.js -o $BUILD_JS &&\
+( node app/js/libs/requirejs/bin/r.js -o appDir=$PROJECT_PATH name='main' baseUrl='app/js' out='build/www/js/main.js' findNestedDependencies=true mainConfigFile='app/js/main.js' $BUILD_JS &&\
   rm -fr build/tmp-css &&\
   cp -r app/css build/tmp-css &&\
   cp -r app/js/libs/jquery.mobile build/tmp-css/ &&\
   cat app/css/styles.css | sed "s/PLATFORM/$target/" > build/tmp-css/styles.css &&\
-  node app/js/libs/requirejs/bin/r.js -o cssIn=build/tmp-css/styles.css out=build/tmp/styles.less &&\
+  node app/js/libs/requirejs/bin/r.js -o appDir=$PROJECT_PATH cssIn=build/tmp-css/styles.css out=build/tmp/styles.less &&\
   node app/js/libs/less/bin/lessc $LESS_OPTIONS build/tmp/styles.less build/www/css/styles.css &&\
   cp app/js/libs/requirejs/require.js build/www/js/require.js
 ) || error "Javascript build failed"
@@ -99,18 +90,17 @@ else
 fi
 
 if  [ "x$BUILD_TESTING" = "xYES" ]; then
-    LOCAL_IP="127.0.0.1"
-    [ "x$BUILD_IOS" = "xYES" ] && test -e config && . config
-    sed "s/LOCAL_IP/$LOCAL_IP/" app/qunit.html > build/www/index.html
+    cp $JACKBONEGAP_PATH/html/qunit.html > build/www/index.html
 else
-    cp app/index.html build/www/index.html
+    sed "s/PROJECT_NAME/$PROJECT_NAME/" $JACKBONEGAP_PATH/html/index.html > build/www/index.html
+    # cp $JACKBONEGAP_PATH/html/index.html build/www/index.html
 fi
 
 # Install Images
 mkdir -p build/www/img
 rsync --delete -a app/img/ build/www/img
 if [ x$target = xweb ]; then
-    ./web/generate-assets.sh
+    $JACKBONEGAP_PATH/web/generate-assets.sh
 fi
 
 mkdir -p build/www/css/jquery.mobile/images
@@ -123,11 +113,11 @@ rm -f build/www/*.tmp
 
 # Compile iOS Application
 if [ x$BUILD_IOS = xYES ]; then
-    . ios/build.sh
+    . $JACKBONEGAP_PATH/ios/build.sh
 fi
 
 # Compile Android Application
 if [ x$BUILD_ANDROID = xYES ]; then
-    . android/build.sh
+    . $JACKBONEGAP_PATH/android/build.sh
 fi
 

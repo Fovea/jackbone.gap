@@ -1,0 +1,8 @@
+## How to set your own mobileprovision:
+
+ *  Put your mobileprovision file in the ios/ folder.
+ *  Reference it from toplevel 'config' file (see config-sample for an example).
+      * Basename only!
+ * Edit project.pbxproj.patch
+      * Replace "CODE_SIGNING_IDENTITY" and "PROVISIONING_PROFILE".
+      * (You can find the ID of your mobileprovision by opening it and finding its "UUID" value)
