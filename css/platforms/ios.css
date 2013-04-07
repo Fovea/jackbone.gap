@@ -1,0 +1,34 @@
+/* iOS specific fix, don't use it on Android devices */
+.scrollable > * {
+    -webkit-transform: translateZ(0px);
+}
+
+/* Per device splash screen selection */
+.splash-screen {
+    background-image: url("../../../Default-Portrait~ipad.png");
+    @media screen and (device-aspect-ratio: 2/3) and (-webkit-device-pixel-ratio: 1) {
+        /* iPhone 3 */
+        background-image: url("../../../Default~iphone.png");
+    }
+    @media screen and (device-aspect-ratio: 2/3) and (-webkit-device-pixel-ratio: 2) {
+        /* iPhone 4 */
+        background-image: url("../../../Default@2x~iphone.png");
+    }
+    @media screen and (device-aspect-ratio: 40/71) {
+        /* iPhone 5 */
+        background-image: url("../../../Default-568h@2x~iphone.png");
+    }
+    @media screen and (device-aspect-ratio: 3/4) and (-webkit-device-pixel-ratio: 1) {
+        /* iPad 1 */
+        background-image: url("../../../Default-Portrait~ipad.png");
+    }
+    @media screen and (device-aspect-ratio: 3/4) and (-webkit-device-pixel-ratio: 2) {
+        /* iPad Retina */
+        background-image: url("../../../Default-Portrait@2x~ipad.png");
+    }
+}
+
+/* hover looks weird on iOS with native scrolling */
+li .ui-btn-hover-a, li.ui-btn-hover-a {
+    .aluminium;
+}

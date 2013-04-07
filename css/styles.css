@@ -1,0 +1,20 @@
+@headerSize: 41px;
+@footerSize: 37px;
+
+/* Third Party */
+@import url("jquery.mobile/jquery.mobile.css");
+
+/* App CSSs */
+@import url('main.css');
+
+/* JQuery Mobile Tweaks */
+@import url('jqm-styling.css');
+@import url('jqm-perfs.css');
+
+/* PhoneGap Tweaks */
+@import url('phonegap.css');
+
+/* Platform Tweaks */
+@import url('platforms/PLATFORM.css');
+
+@import url('functions.css');

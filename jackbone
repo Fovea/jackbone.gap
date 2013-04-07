@@ -15,8 +15,7 @@ function error() {
 
 function usage {
     echo "usage: $0 <command>"
-    echo
-    echo "command in:"
+    echo "commands:"
     echo
     echo " - init     "
     echo "            Download dependencies."

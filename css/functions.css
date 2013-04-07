@@ -1,0 +1,12 @@
+/* Color and position of OK KO NT SK buttons */
+.round-border(@r) {
+	-moz-border-radius: @r;
+	-webkit-border-radius: @r;
+	border-radius: @r;
+}
+
+.gradient-background(@r) {
+    background-image: -moz-linear-gradient(top, @r, darken(@r, 10%)) !important;
+    background-image: -webkit-gradient(linear,left top,left bottom, color-stop(0, @r), color-stop(1, darken(@r, 10%))) !important;
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='@r', EndColorStr='darken(@r, 10%)')" !important;
+}

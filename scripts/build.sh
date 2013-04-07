@@ -39,21 +39,32 @@ fi
 
 rm -fr ios/build
 
-# Compile Handlebars Templates
 mkdir -p build/tmp
+mkdir -p build/tmp-js
+mkdir -p build/tmp-css
+mkdir -p build/www/js
+mkdir -p build/www/css
+
+TMPJS=build/tmp-js
+TMPCSS=build/tmp-css
+
+# Copy all our javascript to a temporary folder
+rsync -a app/js/ build/tmp-js
+
+# Compile Handlebars Templates
 app/js/libs/handlebars/bin/handlebars app/html/*.html -f build/tmp/templates.js -k each -k if -k unless
 # generate templates.js module using precompiled handlebars
-sed -e '/TEMPLATES/r build/tmp/templates.js' $JACKBONEGAP_PATH/js/templates.js.in > app/js/templates.js
+sed -e '/TEMPLATES/r build/tmp/templates.js' $JACKBONEGAP_PATH/js/templates.js.in > $TMPJS/templates.js
 
 # Install platform specific libraries
 if [ x$BUILD_IOS = xYES ]; then
-    cp .downloads/TestFlightPlugin/www/testflight.js app/js/libs/testflight.js
-    cp .downloads/PhoneGap-SQLitePlugin-iOS/iOS/www/SQLitePlugin.js app/js/libs/sqlite.js
+    cp .downloads/TestFlightPlugin/www/testflight.js $TMPJS/libs/testflight.js
+    cp .downloads/PhoneGap-SQLitePlugin-iOS/iOS/www/SQLitePlugin.js $TMPJS/libs/sqlite.js
 else
     # Empty files, so RequireJS finds something.
     # echo > app/js/libs/cordova.js
-    echo > app/js/libs/testflight.js
-    echo > app/js/libs/sqlite.js
+    echo > $TMPJS/libs/testflight.js
+    echo > $TMPJS/libs/sqlite.js
 fi
 
 # Copy version number to Javascript
@@ -61,21 +72,24 @@ VERSION="`$JACKBONEGAP_PATH/jackbone version print`"
 sed -e "s/__VERSION__/$VERSION/" $JACKBONEGAP_PATH/js/version.js.in \
     | sed "s/__BUILD__/`date`/" \
     | sed "s/__RELEASE__/$BUILD_RELEASE/" \
-     > app/js/version.js
+     > $TMPJS/version.js
+
+# Copy Jackbone.gap JS files to Application
+cp $JACKBONEGAP_PATH/js/*.js $TMPJS/
+
+# Prepare CSS
+rsync -a $JACKBONEGAP_PATH/css/ build/tmp-css
+rsync -a app/css/ build/tmp-css
+cp -r app/js/libs/jquery.mobile build/tmp-css/
+cat $JACKBONEGAP_PATH/css/styles.css | sed "s/PLATFORM/$target/" > build/tmp-css/styles.css
 
 # Compile and Optimize Javascript / CSS
-mkdir -p build/www/js
-mkdir -p build/www/css
 if [ x$BUILD_RELEASE == xYES ]; then
     LESS_OPTIONS="--yui-compress"
 fi
 
-( node app/js/libs/requirejs/bin/r.js -o appDir=$PROJECT_PATH name='main' baseUrl='app/js' out='build/www/js/main.js' findNestedDependencies=true mainConfigFile='app/js/main.js' $BUILD_JS &&\
-  rm -fr build/tmp-css &&\
-  cp -r app/css build/tmp-css &&\
-  cp -r app/js/libs/jquery.mobile build/tmp-css/ &&\
-  cat app/css/styles.css | sed "s/PLATFORM/$target/" > build/tmp-css/styles.css &&\
-  node app/js/libs/requirejs/bin/r.js -o appDir=$PROJECT_PATH cssIn=build/tmp-css/styles.css out=build/tmp/styles.less &&\
+( node app/js/libs/requirejs/bin/r.js -o name='main' baseUrl="$TMPJS" out='build/www/js/main.js' findNestedDependencies=true mainConfigFile=$TMPJS/main.js $BUILD_JS &&\
+  node app/js/libs/requirejs/bin/r.js -o cssIn=build/tmp-css/styles.css out=build/tmp/styles.less &&\
   node app/js/libs/less/bin/lessc $LESS_OPTIONS build/tmp/styles.less build/www/css/styles.css &&\
   cp app/js/libs/requirejs/require.js build/www/js/require.js
 ) || error "Javascript build failed"

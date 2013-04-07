@@ -52,25 +52,38 @@ requirejs.config({
 });
 
 require([
+    'jquery',
+    'underscore',
+    'backbone',
     'jackbone',
     'cdv',
-    'tests/testing',
-    'logger'
+    'testing',
+    'logger',
+    'appdelegate'
 ],
-function(Jackbone, Cordova, Testing, Logger) {
+function($, _, Backbone, Jackbone, Cordova, Testing, Logger, AppDelegate) {
 
     function onDeviceReady() {
+
+        var testingEnabled = window.TESTING || false;
         
         Logger.initialize();
         Cordova.initialize();
 
-        var onResume = function() {
+        var onResume = function () {
             Jackbone.ViewManager.reSetupCurrent();
+            if (AppDelegate.resume)
+                AppDelegate.resume();
         };
+        var onPause = function () {
+            if (AppDelegate.pause)
+                AppDelegate.pause();
+        };
+        document.addEventListener("pause", onPause, false);
         document.addEventListener("resume", onResume, false);
 
-        if (Jackbone.main) {
-            Jackbone.main(testingEnabled);
+        if (AppDelegate.start) {
+            AppDelegate.start(testingEnabled);
         }
 
         if (testingEnabled) {

@@ -1,0 +1,49 @@
+/* Fixed headers and footers */
+body {
+    margin: 0;
+}
+
+div.page-container {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+}
+
+div[data-role="header"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.5);
+    z-index: 1;
+    border-bottom: none;
+}
+
+div[data-role="content"] {
+    position: absolute;
+    top:    @headerSize;
+    bottom: @footerSize;
+    left: 0;
+    right: 0;
+    background: none;
+}
+
+div[data-role="footer"] {
+    position:absolute;
+    bottom:0;
+    left: 0;
+    right: 0;
+    height: @footerSize;
+}
+
+.scrollable {
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Fix for dialogs */
+.ui-dialog-contain {
+    height: 100%;
+}
+
