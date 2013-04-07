@@ -1,0 +1,25 @@
+#
+# Jackbon.Gap configuration
+#
+PROJECT_NAME="MyProject"
+
+# Should iOS archive been built
+BUILD_IOS="NO"
+
+# ID of the iOS bundle (should match provisioning profile).
+IOS_BUNDLE_ID="cc.fovea.myproject"
+
+# Provisioning profile to use by the archive command.
+# (should be in ios/ folder)
+PROVISIONING_PROFILE="AdHoc.mobileprovision"
+# ID corresponding to this provisioning profile.
+PROVISIONING_PROFILE_ID=""
+# Developer signing identity to use.
+DEVELOPER_NAME="iPhone Distribution: Fovea"
+
+# Should Android archive been built.
+BUILD_ANDROID="NO"
+
+# ID of the Android bundle
+ANDROID_BUNDLE_ID="cc.fovea.myproject"
+

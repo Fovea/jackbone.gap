@@ -17,6 +17,9 @@ function usage {
     echo "usage: $0 <command>"
     echo "commands:"
     echo
+    echo " - boilerplate"
+    echo "            Create a new Jackbone.gap project in current directory."
+    echo
     echo " - init     "
     echo "            Download dependencies."
     echo
@@ -49,7 +52,7 @@ function usage {
 function checkNeededFiles() {
     test -e $PROJECT_PATH/assets/Default.png || error "assets/Default.png is missing (should be a 2048x2048 image)."
     test -e $PROJECT_PATH/assets/Icon.png || error "assets/Icon.png is missing (should be a 2048x2048 image)."
-    test -e $PROJECT_PATH/config || error "config file is missing, create one from config-sample in Jackbone.Gap directory."
+    test -e $PROJECT_PATH/config || error "config file is missing, create one from config-sample."
     n=`ls -1 $PROJECT_PATH/app/html/ | wc -l`
     [ $n -gt 0 ] || error "Please add your handlebars templates into app/html (at least one is needed)"
 
@@ -69,11 +72,13 @@ export DOWNLOADS_PATH="$PROJECT_PATH/.downloads"
 export LIBS_PATH="$PROJECT_PATH/libs"
 export JS_LIBS_PATH="$PROJECT_PATH/app/js/libs"
 
-checkNeededFiles
-. $PROJECT_PATH/config
+if [ x$command != xboilerplate ]; then
+    checkNeededFiles
+    . $PROJECT_PATH/config
 
-if [ "x$PROJECT_NAME" = "x" ]; then
-    error "config file should specify a project name."
+    if [ "x$PROJECT_NAME" = "x" ]; then
+        error "config file should specify a project name."
+    fi
 fi
 
 $script $@

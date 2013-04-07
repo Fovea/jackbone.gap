@@ -9,7 +9,6 @@ requirejs.config({
         // Libraries
         jquery:       'libs/jquery/jquery',
         underscore:   'libs/underscore/underscore',
-        lodash:       'libs/lodash/lodash',
         backbone:     'libs/backbone/backbone',
         jquerymobile: 'libs/jquery.mobile/jquery.mobile',
         handlebars:   'libs/handlebars/dist/handlebars',
