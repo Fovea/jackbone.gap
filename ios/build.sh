@@ -2,18 +2,19 @@
 #
 # This script should be launched by root dir's build script.
 #
+if [ "x$BUILD_IOS" = "xYES" ]; then
 
-if test -e ios && [ "x$BUILD_IOS" = "xYES" ]; then
+    echo "[BUILD] build/ios"
 
-    IOS_PROJECT_PATH=ios/$PROJECT_NAME
-    rm -fr $IOS_PROJECT_PATH
-    # Create Dummy PhoneGap iOS Project (to get the www)
-    # if ! test -e ios; then
-    ./libs/phonegap/lib/ios/bin/create --shared $IOS_PROJECT_PATH $IOS_BUNDLE_ID $PROJECT_NAME
-    # fi
+    IOS_PROJECT_PATH=$PROJECT_PATH/build/ios/$PROJECT_NAME
+    rm -fr $PROJECT_PATH/build/ios
+    mkdir -p $IOS_PROJECT_PATH
+
+    # Create PhoneGap iOS Project
+    $LIBS_PATH/phonegap/lib/ios/bin/create --shared $IOS_PROJECT_PATH $IOS_BUNDLE_ID $PROJECT_NAME
 
     # Patch the project.
-    patch -p0 << EOF
+    patch -p0 << EOF > /dev/null
 --- $IOS_PROJECT_PATH/$PROJECT_NAME.xcodeproj/project.pbxproj	2013-03-23 09:24:16.000000000 +0200
 +++ $IOS_PROJECT_PATH/$PROJECT_NAME.xcodeproj/project.pbxproj	2013-03-23 11:28:31.000000000 +0200
 @@ -530,7 +530,7 @@
@@ -35,8 +36,8 @@ if test -e ios && [ "x$BUILD_IOS" = "xYES" ]; then
  				USER_HEADER_SEARCH_PATHS = "";
 EOF
 #    cp $PROJECT_PATH/ios/Info.plist $IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist 
-    cp ios/config.xml $IOS_PROJECT_PATH/$PROJECT_NAME/config.xml
-    cp ios/archive $IOS_PROJECT_PATH/cordova/archive
+    cp $JACKBONEGAP_PATH/ios/config.xml $IOS_PROJECT_PATH/$PROJECT_NAME/config.xml
+    cp $JACKBONEGAP_PATH/ios/archive $IOS_PROJECT_PATH/cordova/archive
 
     # Generate icons and splash screens.
     . $JACKBONEGAP_PATH/ios/generate-assets.sh
@@ -46,30 +47,28 @@ EOF
 
     # Install missing plugins.
     # Note: Some will not be installed for final distribution.
-    # mkdir -p ios/www
-    echo "[INSTALL] CDV TestFlight"
-    $LIBS_PATH/plugman/plugman.js --platform ios --project $IOS_PROJECT_PATH --plugin .downloads/TestflightPlugin --remove
-    $LIBS_PATH/plugman/plugman.js --platform ios --project $IOS_PROJECT_PATH --plugin .downloads/TestflightPlugin || error "Failed to install Testflight Plugin"
-    echo "[INSTALL] CDV SQLite"
-    $LIBS_PATH/plugman/plugman.js --platform ios --project $IOS_PROJECT_PATH --plugin .downloads/PhoneGap-SQLitePlugin-iOS/iOS --remove
-    $LIBS_PATH/plugman/plugman.js --platform ios --project $IOS_PROJECT_PATH --plugin .downloads/PhoneGap-SQLitePlugin-iOS/iOS || error "Failed to install SQLite Plugin"
-    # if ! test -e ios/Checklist/Plugins/PGSQLitePlugin.m; then
-    #     echo "[INSTALL] CDV "
-    #     ./libs/plugman/plugman.js --platform ios --project ios --plugin .downloads/PGSQLitePlugin --remove
-    #     ./libs/plugman/plugman.js --platform ios --project ios --plugin .downloads/PGSQLitePlugin || error "Failed to install PGSQLite Plugin"
-    # fi
+    cd $PROJECT_PATH/build
+    echo -n .
+    # INSTALL CDV TestFlight"
+    $JS_LIBS_PATH/plugman/plugman.js --platform ios --project $IOS_PROJECT_PATH --plugin $PROJECT_PATH/.downloads/TestflightPlugin > $EFILE || error "Failed to install Testflight Plugin"
+
+    echo -n .
+    # INSTALL CDV SQLite"
+    $JS_LIBS_PATH/plugman/plugman.js --platform ios --project $IOS_PROJECT_PATH --plugin $PROJECT_PATH/.downloads/PhoneGap-SQLitePlugin-iOS/iOS > $EFILE || error "Failed to install SQLite Plugin"
+    rm $EFILE
+    cd $PROJECT_PATH
 
     # Adjust the mess (lib install doesn't work... testflight.js file is unneeded)
     mkdir -p $IOS_PROJECT_PATH/build
     rm -fr $IOS_PROJECT_PATH/www/testflight.js
-    cp $DOWNLOADS_PATH/TestflightPlugin/src/ios/libTestFlight.a ./$IOS_PROJECT_PATH/build/
+    cp $DOWNLOADS_PATH/TestflightPlugin/src/ios/libTestFlight.a $IOS_PROJECT_PATH/build/
 
     # Get default PhoneGap files
     # rsync -a build/ios/www/ ios/www
     # Patch them with our own files
     rsync -a build/www/ $IOS_PROJECT_PATH/www
     # Remove version number from cordova.js
-    . $PROJECT_PATH/package.sh # PHONEGAP_VERSION is stored here.
+    . $JACKBONEGAP_PATH/package.sh # PHONEGAP_VERSION is stored here.
     mv $IOS_PROJECT_PATH/www/cordova-$PHONEGAP_VERSION.js $IOS_PROJECT_PATH/www/js/cordova.js
 
     # Copy TestFlight lib to iOS folder... YAH
@@ -79,15 +78,21 @@ EOF
 
     # Only prepare the www folder.
     if [ "x$conf" = "xwww" ]; then
+        echo
         exit 0;
     fi
 
     # Build
     if [ x$BUILD_RELEASE = xYES ]; then
-        ./$IOS_PROJECT_PATH/cordova/release || error "iOS build failed"
+        $IOS_PROJECT_PATH/cordova/release | tee $EFILE | awk '{ printf "."; fflush }' || error "iOS build failed"
     else
-        ./$IOS_PROJECT_PATH/cordova/build   || error "iOS build failed"
+        $IOS_PROJECT_PATH/cordova/build  | tee $EFILE | awk '{ printf "."; fflush }' || error "iOS build failed"
     fi
+    rm $EFILE
+
+    echo
+    echo '[DONE]'
+    echo 'run' $PROJECT_NAME 'with "jackbone run ios"'
 else
     echo "This script should be launched by root dir's build script."
     exit 1

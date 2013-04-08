@@ -17,20 +17,20 @@ define([
         }
     });
 
-    var start = function (testingEnabled) {
-        var MyRouter = Jackbone.Router.extend({
-            routes: {
-            // Pages
-            '':     'menu',
-            'menu': 'menu',
-            // Default - catch all
-            '*actions': 'defaultAction'
-            },
-            menu: function () {
-                this.openView('Menu', MenuView, {});
-            }
-        });
+    var MyRouter = Jackbone.Router.extend({
+        routes: {
+        // Pages
+        '':     'menu',
+        'menu': 'menu',
+        // Default - catch all
+        '*actions': 'defaultAction'
+        },
+        menu: function () {
+            this.openView('Menu', MenuView, {});
+        }
+    });
 
+    var start = function (testingEnabled) {
         var router = new MyRouter();
         Jackbone.history.start();
         router.goto('menu');

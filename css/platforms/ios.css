@@ -28,7 +28,8 @@
     }
 }
 
-/* hover looks weird on iOS with native scrolling */
+/* hover looks weird on iOS with native scrolling 
 li .ui-btn-hover-a, li.ui-btn-hover-a {
     .aluminium;
 }
+*/

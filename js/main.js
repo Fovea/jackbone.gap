@@ -66,31 +66,47 @@ function($, _, Backbone, Jackbone, Cordova, Testing, Logger, AppDelegate) {
 
         var testingEnabled = window.TESTING || false;
         
+        // Initialize some plugins.
         Logger.initialize();
         Cordova.initialize();
 
+        // When application is resumed, make sure we re-setup the current view
+        // and ask client application to resume execution.
         var onResume = function () {
-            Jackbone.ViewManager.reSetupCurrent();
-            if (AppDelegate.resume)
+            if (Jackbone.ViewManager.reSetupCurrent) {
+                Jackbone.ViewManager.reSetupCurrent();
+            }
+            if (AppDelegate.resume) {
                 AppDelegate.resume();
+            }
         };
-        var onPause = function () {
-            if (AppDelegate.pause)
-                AppDelegate.pause();
-        };
-        document.addEventListener("pause", onPause, false);
         document.addEventListener("resume", onResume, false);
 
+        // When application is paused, ask client application to stop execution.
+        var onPause = function () {
+            if (AppDelegate.pause) {
+                AppDelegate.pause();
+            }
+        };
+        document.addEventListener("pause", onPause, false);
+
+        // Hide splash screen
+        Cordova.hideNativeSplash();
+        $('.splash-screen').remove();
+
+        // Start client application
         if (AppDelegate.start) {
             AppDelegate.start(testingEnabled);
         }
 
+        // Run the tests if testing is enabled
         if (testingEnabled) {
             Testing.run();
         }
     }
     
-    if (window.cordova) // PhoneGap / Cordova
+    // If cordova (PhoneGap) is present, we'll wait for 'deviceready' before doing anything.
+    if (window.cordova)
         document.addEventListener("deviceready", onDeviceReady, false);
     else
         onDeviceReady();

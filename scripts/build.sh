@@ -48,6 +48,8 @@ mkdir -p build/www/css
 TMPJS=build/tmp-js
 TMPCSS=build/tmp-css
 
+echo "[BUILD] build/www"
+
 # Copy all our javascript to a temporary folder
 rsync -a app/js/ build/tmp-js
 
@@ -88,11 +90,15 @@ if [ x$BUILD_RELEASE == xYES ]; then
     LESS_OPTIONS="--yui-compress"
 fi
 
-( node app/js/libs/requirejs/bin/r.js -o name='main' baseUrl="$TMPJS" out='build/www/js/main.js' findNestedDependencies=true mainConfigFile=$TMPJS/main.js $BUILD_JS &&\
-  node app/js/libs/requirejs/bin/r.js -o cssIn=build/tmp-css/styles.css out=build/tmp/styles.less &&\
-  node app/js/libs/less/bin/lessc $LESS_OPTIONS build/tmp/styles.less build/www/css/styles.css &&\
-  cp app/js/libs/requirejs/require.js build/www/js/require.js
-) || error "Javascript build failed"
+echo -n .
+node app/js/libs/requirejs/bin/r.js -o name='main' baseUrl="$TMPJS" out='build/www/js/main.js' findNestedDependencies=true mainConfigFile=$TMPJS/main.js $BUILD_JS > build/tmp/jackbone.out || error "Javascript build failed"
+echo -n .
+node app/js/libs/requirejs/bin/r.js -o cssIn=build/tmp-css/styles.css out=build/tmp/styles.less > build/tmp/jackbone.out || error "CSS build failed"
+echo -n .
+node app/js/libs/less/bin/lessc $LESS_OPTIONS build/tmp/styles.less build/www/css/styles.css > build/tmp/jackbone.out || error "CSS build failed"
+echo -n .
+cp app/js/libs/requirejs/require.js build/www/js/require.js
+rm -f build/tmp/jackbone.out
  
 # Add "main.js" lines to itself.
 if [ x$BUILD_RELEASE == xYES ]; then
@@ -107,7 +113,6 @@ if  [ "x$BUILD_TESTING" = "xYES" ]; then
     cp $JACKBONEGAP_PATH/html/qunit.html > build/www/index.html
 else
     sed "s/PROJECT_NAME/$PROJECT_NAME/" $JACKBONEGAP_PATH/html/index.html > build/www/index.html
-    # cp $JACKBONEGAP_PATH/html/index.html build/www/index.html
 fi
 
 # Install Images
@@ -124,6 +129,8 @@ if [ "x$BUILD_TESTING" = "xYES" ]; then
     cp app/js/libs/qunitjs/qunit/qunit.css build/www/js/libs/qunitjs/qunit/qunit.css
 fi
 rm -f build/www/*.tmp
+
+echo
 
 # Compile iOS Application
 if [ x$BUILD_IOS = xYES ]; then

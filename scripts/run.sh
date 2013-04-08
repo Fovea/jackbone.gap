@@ -1,27 +1,24 @@
 #!/bin/bash
 
-cd `dirname $0` # Makes sure we're running from the current directory.
-
 function usage() {
-    echo "usage: $0 <web|ios|android>"
+    echo "usage: jackbone run <web|ios|android>"
     exit 1
 }
 
 # Read command line options
-target="$1"
+target="$2"
 
 if [ "x$target" = "xweb" ]; then
-    # SAFARIDEV="/Applications/Safari.app/Contents/MacOS/SafariForWebKitDevelopment"
-    # if test -e $SAFARIDEV; then
-    # $SAFARIDEV build/www/index.html &
-    # else
-    echo open /Applications/Google\ Chrome.app --args --enable-memory-info --disable-web-security file://`pwd`/build/www/index.html
-    open /Applications/Google\ Chrome.app --args --enable-memory-info --disable-web-security file://`pwd`/build/www/index.html
-    # fi
+    echo
+    echo Just open file://`pwd`/build/www/index.html
+    echo
+    echo Useful Chrome flags: --enable-memory-info --disable-web-security --allow-file-access-from-files
+    echo Useful Safari: /Applications/Safari.app/Contents/MacOS/SafariForWebKitDevelopment
+    echo
 elif [ "x$target" = "xios" ]; then
-    . ios/run.sh
+    . $JACKBONEGAP_PATH/ios/run.sh
 elif [ "x$target" = "xandroid" ]; then
-    . android/run.sh
+    . $JACKBONEGAP_PATH/android/run.sh
 else
     usage
 fi

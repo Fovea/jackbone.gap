@@ -92,12 +92,6 @@ if ! test -e $JS_LIBS_PATH/backbone.localstorage/backbone.localStorage.js; then
     mv $DOWNLOADS_PATH/Backbone.localStorage-master/backbone.localStorage*.js $JS_LIBS_PATH/backbone.localstorage/
 fi
 
-# Download and install Plugman (Cordova plugin manager)
-echo "--- Plugman"
-if ! test -e $LIBS_PATH/plugman; then
-    ( cd $LIBS_PATH && git clone https://github.com/imhotep/plugman.git && cd plugman && npm install || exit 1 ) || error "Could not install Plugman"
-fi
-
 function gitPull {
     url="$1"
     name=`basename "$url" .git`

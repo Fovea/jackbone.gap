@@ -1,6 +1,6 @@
 #!/bin/bash
 
-which convert || ( echo "ERROR: ImageMagick not installed or not in PATH"; exit 1)
+which convert > /dev/null || error "ImageMagick not installed or not in PATH"
 
 function cropResize() {
     src=$1
@@ -9,11 +9,10 @@ function cropResize() {
     h=$4
     extra=$5
     size="${w}x${h}"
-    echo "Resize $src -> $dest $size    $extra"
+    echo -n . # "Resize $src -> $dest $size    $extra"
     convert $src -resize $size^ -gravity Center -crop $size+0+0 +repage $extra $dest
 }
 
-IOS_PROJECT_PATH=$PROJECT_PATH/ios/$PROJECT_NAME
 ICON_PATH=$IOS_PROJECT_PATH/$PROJECT_NAME/Resources/icons
 SPLASH_PATH=$IOS_PROJECT_PATH/$PROJECT_NAME/Resources/splash
 

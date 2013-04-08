@@ -5,11 +5,10 @@ command=$1
 target=$2
 
 function error() {
+    test -e $EFILE && cat $EFILE
     echo
     echo "[ERROR] $1"
     echo
-#    uname -a
-#    echo
     exit  1
 }
 
@@ -71,6 +70,7 @@ test -e $script || usage
 export DOWNLOADS_PATH="$PROJECT_PATH/.downloads"
 export LIBS_PATH="$PROJECT_PATH/libs"
 export JS_LIBS_PATH="$PROJECT_PATH/app/js/libs"
+export EFILE="$PROJECT_PATH/build/tmp/jackbone.out"
 
 if [ x$command != xboilerplate ]; then
     checkNeededFiles
@@ -81,4 +81,4 @@ if [ x$command != xboilerplate ]; then
     fi
 fi
 
-$script $@
+. $script $@ || exit 1

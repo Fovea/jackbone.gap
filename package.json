@@ -11,6 +11,7 @@
         "stacktrace-js": "latest",
         "jsdoc-toolkit": "latest",
         "less":          "latest",
-        "jackbone":      "latest"
+        "jackbone":      "latest",
+        "plugman":       "latest"
     }
 }
