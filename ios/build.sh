@@ -72,9 +72,10 @@ EOF
     mv $IOS_PROJECT_PATH/www/cordova-$PHONEGAP_VERSION.js $IOS_PROJECT_PATH/www/js/cordova.js
 
     # Copy TestFlight lib to iOS folder... YAH
-    #for d in ~/Library/Developer/Xcode/DerivedData/Checklist-*/Build/Products/Debug-iphoneos/; do
-    #    cp ios/checklist/build/libTestFlight.a $d
-    #done
+    # That's a bloody hack... but it works.
+    for d in ~/Library/Developer/Xcode/DerivedData/$PROJECT_NAME-*/Build/Products/Debug-iphoneos/; do
+        cp $IOS_PROJECT_PATH/build/libTestFlight.a $d
+    done
 
     # Only prepare the www folder.
     if [ "x$conf" = "xwww" ]; then
