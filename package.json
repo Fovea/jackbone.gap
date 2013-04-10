@@ -1,6 +1,6 @@
 {
-    "name": "baby-goo",
-    "version": "0.1.0",
+    "name": "jackbone.gap",
+    "version": "0.0.0",
     "private": true,
     "dependencies": {
         "underscore":    "latest",
@@ -12,6 +12,7 @@
         "jsdoc-toolkit": "latest",
         "less":          "latest",
         "jackbone":      "latest",
-        "plugman":       "latest"
+        "plugman":       "latest",
+        "kassics":       "latest"
     }
 }

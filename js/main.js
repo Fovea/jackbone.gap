@@ -17,7 +17,8 @@ requirejs.config({
         sqlite:       'libs/sqlite',
         kinetic:      'libs/kinetic',
         stacktrace:   'libs/stacktrace-js/stacktrace',
-        jackbone:     'libs/jackbone/jackbone'
+        jackbone:     'libs/jackbone/jackbone',
+        kassics:      'libs/kassics/kassics'
     },
 
     shim: {
@@ -43,6 +44,9 @@ requirejs.config({
         },
         kinetic: {
             exports: 'Kinetic'
+        },
+        kassics: {
+            exports: 'Kassics'
         },
         stacktrace: {
             exports: 'printStackTrace'
