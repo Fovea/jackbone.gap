@@ -18,7 +18,8 @@ requirejs.config({
         kinetic:      'libs/kinetic',
         stacktrace:   'libs/stacktrace-js/stacktrace',
         jackbone:     'libs/jackbone/jackbone',
-        kassics:      'libs/kassics/kassics'
+        kassics:      'libs/kassics/kassics',
+        k6particles:  'libs/kassics/plugins/particles'
     },
 
     shim: {
@@ -47,6 +48,9 @@ requirejs.config({
         },
         kassics: {
             exports: 'Kassics'
+        },
+        k6particles: {
+            deps: ["kassics"]
         },
         stacktrace: {
             exports: 'printStackTrace'
