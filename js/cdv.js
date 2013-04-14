@@ -3,9 +3,10 @@
  */
 define([
   'jquery',
+  'underscore',
   'logger',
   'testflight',
-], function ($,Logger) {
+], function ($,_,Logger) {
     /**
      * Sets Cordova initial configuration, checks for supported features, loads plugins.
      * @name Cordova
@@ -88,6 +89,24 @@ define([
         Logger.log(message);
         if (Cordova.testflight !== false && message)
             Cordova.remoteLog(function(){}, function(){}, message);
+    };
+
+    /** Play a sound.
+     * @param url of the sound.
+     */
+    Cordova.playSound = function(url) {
+        // If Media API is supported.
+        if (window.Media) {
+            if (!Cordova.playSound[url]) {
+                Cordova.playSound[url] = _.debounce(function () {
+                    var onSuccess = function () {};
+                    var sound = new Media(url, onSuccess);
+                    sound.play({ playAudioWhenScreenIsLocked : false });
+                }, 200, true);
+            }
+            Cordova.playSound[url].call(this);
+            // TODO: release.
+        }
     };
 
     // Debbugging remote calls to flightwatching server.

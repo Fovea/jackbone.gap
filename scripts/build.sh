@@ -96,13 +96,13 @@ if [ x$BUILD_RELEASE == xYES ]; then
     LESS_OPTIONS="--yui-compress"
 fi
 
-echo -n .
+echo -n r
 node app/js/libs/requirejs/bin/r.js -o name='main' baseUrl="$TMPJS" out='build/www/js/main.js' findNestedDependencies=true mainConfigFile=$TMPJS/main.js $BUILD_JS > build/tmp/jackbone.out || error "Javascript build failed"
-echo -n .
+echo -n r
 node app/js/libs/requirejs/bin/r.js -o cssIn=build/tmp-css/styles.css out=build/tmp/styles.less > build/tmp/jackbone.out || error "CSS build failed"
-echo -n .
+echo -n r
 node app/js/libs/less/bin/lessc $LESS_OPTIONS build/tmp/styles.less build/www/css/styles.css > build/tmp/jackbone.out || error "CSS build failed"
-echo -n .
+echo -n r
 cp app/js/libs/requirejs/require.js build/www/js/require.js
 rm -f build/tmp/jackbone.out
  
@@ -124,6 +124,7 @@ fi
 # Install Images
 mkdir -p build/www/img
 if test -x $PROJECT_PATH/build-images.sh; then
+    echo -n i
     $PROJECT_PATH/build-images.sh || error "Custom Build Images"
 fi
 if [ "x$BUILD_IMAGES" != "x" ]; then
@@ -132,7 +133,7 @@ if [ "x$BUILD_IMAGES" != "x" ]; then
         SIZE=`echo $i | cut -d@ -f2`
         W=`echo $SIZE | cut -dx -f1`
         H=`echo $SIZE | cut -dx -f2`
-        echo -n .
+        echo -n i
         $JACKBONEGAP_PATH/tools/buildimage.sh $FILE $W $H || exit "Resizing $FILE failed"
     done
 else
@@ -142,6 +143,7 @@ if [ x$target = xweb ]; then
     $JACKBONEGAP_PATH/web/generate-assets.sh
 fi
 
+echo -n j
 mkdir -p build/www/css/jquery.mobile/images
 rsync -a app/js/libs/jquery.mobile/images/ build/www/css/jquery.mobile/images
 if [ "x$BUILD_TESTING" = "xYES" ]; then
@@ -149,6 +151,14 @@ if [ "x$BUILD_TESTING" = "xYES" ]; then
     cp app/js/libs/qunitjs/qunit/qunit.css build/www/js/libs/qunitjs/qunit/qunit.css
 fi
 rm -f build/www/*.tmp
+
+# Install Sounds
+echo -n s
+mkdir -p build/www/snd
+if test -x $PROJECT_PATH/build-sounds.sh; then
+    $PROJECT_PATH/build-sounds.sh || error "Custom Build Sounds"
+fi
+rsync --delete -a app/snd/ build/www/snd
 
 echo
 
