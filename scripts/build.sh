@@ -126,10 +126,6 @@ mkdir -p build/www/img
 if test -x $PROJECT_PATH/build-images.sh; then
     $PROJECT_PATH/build-images.sh || error "Custom Build Images"
 fi
-rsync --delete -a app/img/ build/www/img
-if [ x$target = xweb ]; then
-    $JACKBONEGAP_PATH/web/generate-assets.sh
-fi
 if [ "x$BUILD_IMAGES" != "x" ]; then
     for i in $BUILD_IMAGES; do
         FILE=`echo $i | cut -d@ -f1`
@@ -139,6 +135,11 @@ if [ "x$BUILD_IMAGES" != "x" ]; then
         echo -n .
         $JACKBONEGAP_PATH/tools/buildimage.sh $FILE $W $H || exit "Resizing $FILE failed"
     done
+else
+    rsync --delete -a app/img/ build/www/img
+fi
+if [ x$target = xweb ]; then
+    $JACKBONEGAP_PATH/web/generate-assets.sh
 fi
 
 mkdir -p build/www/css/jquery.mobile/images
