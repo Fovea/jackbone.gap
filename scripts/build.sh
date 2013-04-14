@@ -132,7 +132,11 @@ if [ "x$BUILD_IMAGES" != "x" ]; then
         FILE=`echo $i | cut -d@ -f1`
         SIZE=`echo $i | cut -d@ -f2`
         W=`echo $SIZE | cut -dx -f1`
-        H=`echo $SIZE | cut -dx -f2`
+        if echo $SIZE | grep x > /dev/null; then
+            H=`echo $SIZE | cut -dx -f2`
+        else
+            H=""
+        fi
         echo -n i
         $JACKBONEGAP_PATH/tools/buildimage.sh $FILE $W $H || exit "Resizing $FILE failed"
     done
