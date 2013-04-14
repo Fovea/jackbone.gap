@@ -21,19 +21,25 @@ function cropResize() {
     extra=$6
     size="${w}x${h}"
     mkdir -p $dest/img
-    convert $src -resize $size\! $dest/img/$destfile
+    if test $src -nt $dest/img/$destfile || test ! -e $dest/img/$destfile; then
+        convert $src -resize $size\! $dest/img/$destfile
+    fi
 
     w2=$((w * 2))
     h2=$((h * 2))
     size="${w2}x${h2}"
     mkdir -p $dest/img-hd
-    convert $src -resize $size\! $dest/img-hd/$destfile
+    if test $src -nt $dest/img-hd/$destfile || test ! -e $dest/img-hd/$destfile; then
+        convert $src -resize $size\! $dest/img-hd/$destfile
+    fi
 
     w2=$((w / 2))
     h2=$((h / 2))
     size="${w2}x${h2}"
     mkdir -p $dest/img-ld
-    convert $src -resize $size\! $dest/img-ld/$destfile
+    if test $src -nt $dest/img-ld/$destfile || test ! -e $dest/img-ld/$destfile; then
+        convert $src -resize $size\! $dest/img-ld/$destfile
+    fi
 }
 
 FILE=$1
