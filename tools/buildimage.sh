@@ -20,6 +20,14 @@ function cropResize() {
     h=$5
     extra=$6
     size="${w}x${h}"
+
+    if [ x$h = x ]; then
+        src_size=`identify $src | cut -d\  -f3`
+        src_w=`echo $src_size | cut -dx -f1`
+        src_h=`echo $src_size | cut -dx -f2`
+        h=$((w * src_h / src_w))
+    fi
+
     mkdir -p $dest/img
     if test $src -nt $dest/img/$destfile || test ! -e $dest/img/$destfile; then
         convert $src -resize $size\! $dest/img/$destfile
@@ -45,7 +53,7 @@ function cropResize() {
 FILE=$1
 W=$2
 H=$3
-if [ x$H = x ]; then
+if [ x$W = x ]; then
     echo "wrong arguments: $FILE $W $H"
     usage
 fi
