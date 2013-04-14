@@ -54,6 +54,9 @@ echo "[BUILD] build/www"
 rsync -a app/js/ build/tmp-js
 
 # Compile Handlebars Templates
+if test -x $PROJECT_PATH/build-html.sh; then
+    $PROJECT_PATH/build-html.sh || error "Custom Build HTML"
+fi
 app/js/libs/handlebars/bin/handlebars app/html/*.html -f build/tmp/templates.js -k each -k if -k unless
 # generate templates.js module using precompiled handlebars
 sed -e '/TEMPLATES/r build/tmp/templates.js' $JACKBONEGAP_PATH/js/templates.js.in > $TMPJS/templates.js
@@ -80,6 +83,9 @@ sed -e "s/__VERSION__/$VERSION/" $JACKBONEGAP_PATH/js/version.js.in \
 cp $JACKBONEGAP_PATH/js/*.js $TMPJS/
 
 # Prepare CSS
+if test -x $PROJECT_PATH/build-css.sh; then
+    $PROJECT_PATH/build-css.sh || error "Custom Build CSS"
+fi
 rsync -a $JACKBONEGAP_PATH/css/ build/tmp-css
 rsync -a app/css/ build/tmp-css
 cp -r app/js/libs/jquery.mobile build/tmp-css/
@@ -117,9 +123,22 @@ fi
 
 # Install Images
 mkdir -p build/www/img
+if test -x $PROJECT_PATH/build-images.sh; then
+    $PROJECT_PATH/build-images.sh || error "Custom Build Images"
+fi
 rsync --delete -a app/img/ build/www/img
 if [ x$target = xweb ]; then
     $JACKBONEGAP_PATH/web/generate-assets.sh
+fi
+if [ "x$BUILD_IMAGES" != "x" ]; then
+    for i in $BUILD_IMAGES; do
+        FILE=`echo $i | cut -d@ -f1`
+        SIZE=`echo $i | cut -d@ -f2`
+        W=`echo $SIZE | cut -dx -f1`
+        H=`echo $SIZE | cut -dx -f2`
+        echo -n .
+        $JACKBONEGAP_PATH/tools/buildimage.sh $FILE $W $H || exit "Resizing $FILE failed"
+    done
 fi
 
 mkdir -p build/www/css/jquery.mobile/images
