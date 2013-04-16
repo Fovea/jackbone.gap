@@ -104,6 +104,7 @@ echo -n r
 node app/js/libs/less/bin/lessc $LESS_OPTIONS build/tmp/styles.less build/www/css/styles.css > build/tmp/jackbone.out || error "CSS build failed"
 echo -n r
 cp app/js/libs/requirejs/require.js build/www/js/require.js
+cp $JACKBONEGAP_PATH/js/worker-helper.js build/www/js
 rm -f build/tmp/jackbone.out
  
 # Add "main.js" lines to itself.
