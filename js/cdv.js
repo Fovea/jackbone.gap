@@ -91,21 +91,23 @@ define([
             Cordova.remoteLog(function(){}, function(){}, message);
     };
 
+    var soundLoadedSuccess = function () {};
+    var sounds = {};
+
     /** Play a sound.
      * @param url of the sound.
      */
     Cordova.playSound = function(url) {
         // If Media API is supported.
         if (window.Media) {
-            if (!Cordova.playSound[url]) {
-                Cordova.playSound[url] = _.debounce(function () {
-                    var onSuccess = function () {};
-                    var sound = new Media(url, onSuccess);
-                    sound.play({ playAudioWhenScreenIsLocked : false });
+            if (!sounds[url]) {
+                var media = new Media(url, soundLoadedSuccess);
+                sounds[url] = _.debounce(function () {
+                    media.play({ playAudioWhenScreenIsLocked : false });
                 }, 200, true);
             }
-            Cordova.playSound[url].call(this);
-            // TODO: release.
+            sounds[url].call(this);
+            // TODO: release sounds...
         }
     };
 

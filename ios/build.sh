@@ -7,6 +7,13 @@ if [ "x$BUILD_IOS" = "xYES" ]; then
     echo "[BUILD] build/ios"
 
     IOS_PROJECT_PATH=$PROJECT_PATH/build/ios/$PROJECT_NAME
+
+    if [ "x$conf" = "xwww" ] && test -e $IOS_PROJECT_PATH; then
+        # Only rebuild www
+        rsync -a build/www/ $IOS_PROJECT_PATH/www
+        exit 0
+    fi
+
     rm -fr $PROJECT_PATH/build/ios
     mkdir -p $IOS_PROJECT_PATH
 
@@ -18,24 +25,26 @@ if [ "x$BUILD_IOS" = "xYES" ]; then
 --- $IOS_PROJECT_PATH/$PROJECT_NAME.xcodeproj/project.pbxproj	2013-03-23 09:24:16.000000000 +0200
 +++ $IOS_PROJECT_PATH/$PROJECT_NAME.xcodeproj/project.pbxproj	2013-03-23 11:28:31.000000000 +0200
 @@ -530,7 +530,7 @@
- 				CLANG_WARN_ENUM_CONVERSION = YES;
- 				CLANG_WARN_INT_CONVERSION = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+            CLANG_WARN_ENUM_CONVERSION = YES;
+            CLANG_WARN_INT_CONVERSION = YES;
+            CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 -				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 +				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "$DEVELOPER_NAME";
- 				GCC_C_LANGUAGE_STANDARD = c99;
- 				GCC_THUMB_SUPPORT = NO;
- 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+            GCC_C_LANGUAGE_STANDARD = c99;
+            GCC_THUMB_SUPPORT = NO;
+            GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 @@ -556,6 +556,7 @@
- 					"-all_load",
- 					"-Obj-C",
- 				);
+                "-all_load",
+                "-Obj-C",
+            );
 +				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "$PROVISIONING_PROFILE_ID";
- 				SDKROOT = iphoneos;
- 				SKIP_INSTALL = NO;
- 				USER_HEADER_SEARCH_PATHS = "";
+            SDKROOT = iphoneos;
+            SKIP_INSTALL = NO;
+            USER_HEADER_SEARCH_PATHS = "";
 EOF
-#    cp $PROJECT_PATH/ios/Info.plist $IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist 
+    if test -e $PROJECT_PATH/ios/Info.plist; then
+        cp $PROJECT_PATH/ios/Info.plist $IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist 
+    fi
     cp $JACKBONEGAP_PATH/ios/config.xml $IOS_PROJECT_PATH/$PROJECT_NAME/config.xml
     cp $JACKBONEGAP_PATH/ios/archive $IOS_PROJECT_PATH/cordova/archive
 
@@ -62,7 +71,7 @@ EOF
     mkdir -p $IOS_PROJECT_PATH/build
     rm -fr $IOS_PROJECT_PATH/www/testflight.js
     cp $DOWNLOADS_PATH/TestflightPlugin/src/ios/libTestFlight.a $IOS_PROJECT_PATH/build/
-
+    
     # Get default PhoneGap files
     # rsync -a build/ios/www/ ios/www
     # Patch them with our own files
@@ -76,12 +85,6 @@ EOF
     for d in ~/Library/Developer/Xcode/DerivedData/$PROJECT_NAME-*/Build/Products/Debug-iphoneos/; do
         cp $IOS_PROJECT_PATH/build/libTestFlight.a $d
     done
-
-    # Only prepare the www folder.
-    if [ "x$conf" = "xwww" ]; then
-        echo
-        exit 0;
-    fi
 
     # Build
     if [ x$BUILD_RELEASE = xYES ]; then

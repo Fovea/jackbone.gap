@@ -27,6 +27,13 @@ Type `jackbone help` for full usage.
 + assets/Icon.png        -- Icon image
 ```
 
+##iOS
+
+Jackbone will generate a iOS project at build time, that should be ok for most users. However, you can override some defaults if needed:
+
+###Info.plist
+If file named `ios/Info.plist` is found in your project directory, it will be used instead of the default one.
+
 ##License
 
 Jackbone.gap is distributed under the MIT License.
