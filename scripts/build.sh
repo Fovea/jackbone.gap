@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Makes sure we're running from the project directory.
-cd $PROJECT_PATH
+cd "$PROJECT_PATH"
 
 function usage() {
     echo "usage: jackbone build <web|ios|android> <debug|release|testing|www>"
@@ -74,20 +74,20 @@ fi
 
 # Copy version number to Javascript
 VERSION="`$JACKBONEGAP_PATH/jackbone version print`"
-sed -e "s/__VERSION__/$VERSION/" $JACKBONEGAP_PATH/js/version.js.in \
+sed -e "s/__VERSION__/$VERSION/" "$JACKBONEGAP_PATH/js/version.js.in" \
     | sed "s/__BUILD__/`date`/" \
     | sed "s/__RELEASE__/$BUILD_RELEASE/" \
      > "$TMPJS/version.js"
 
 # Copy Jackbone.gap JS files to Application
-cp "$JACKBONEGAP_PATH/js/*.js" "$TMPJS/"
+cp "$JACKBONEGAP_PATH/js/"*.js "$TMPJS/"
 
 # Prepare CSS
 if test -x "$PROJECT_PATH/build-css.sh"; then
     "$PROJECT_PATH/build-css.sh" || error "Custom Build CSS"
 fi
 rsync -a "$JACKBONEGAP_PATH/css/" "build/tmp-css"
-rsync -a "app/css/ build/tmp-css"
+rsync -a app/css/ build/tmp-css
 cp -r "app/js/libs/jquery.mobile" "build/tmp-css/"
 cat "$JACKBONEGAP_PATH/css/styles.css" | sed "s/PLATFORM/$target/" > "build/tmp-css/styles.css"
 
