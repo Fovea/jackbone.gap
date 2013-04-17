@@ -16,9 +16,9 @@ if [ "x$target" = "xweb" ]; then
     echo Useful Safari: /Applications/Safari.app/Contents/MacOS/SafariForWebKitDevelopment
     echo
 elif [ "x$target" = "xios" ]; then
-    . $JACKBONEGAP_PATH/ios/run.sh
+    . "$JACKBONEGAP_PATH/ios/run.sh"
 elif [ "x$target" = "xandroid" ]; then
-    . $JACKBONEGAP_PATH/android/run.sh
+    . "$JACKBONEGAP_PATH/android/run.sh"
 else
     usage
 fi

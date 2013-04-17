@@ -54,22 +54,22 @@ echo "[BUILD] build/www"
 rsync -a app/js/ build/tmp-js
 
 # Compile Handlebars Templates
-if test -x $PROJECT_PATH/build-html.sh; then
-    $PROJECT_PATH/build-html.sh || error "Custom Build HTML"
+if test -x "$PROJECT_PATH/build-html.sh"; then
+    "$PROJECT_PATH/build-html.sh" || error "Custom Build HTML"
 fi
 app/js/libs/handlebars/bin/handlebars app/html/*.html -f build/tmp/templates.js -k each -k if -k unless
 # generate templates.js module using precompiled handlebars
-sed -e '/TEMPLATES/r build/tmp/templates.js' $JACKBONEGAP_PATH/js/templates.js.in > $TMPJS/templates.js
+sed -e '/TEMPLATES/r build/tmp/templates.js' "$JACKBONEGAP_PATH/js/templates.js.in" > "$TMPJS/templates.js"
 
 # Install platform specific libraries
 if [ x$BUILD_IOS = xYES ]; then
-    cp .downloads/TestFlightPlugin/www/testflight.js $TMPJS/libs/testflight.js
-    cp .downloads/PhoneGap-SQLitePlugin-iOS/iOS/www/SQLitePlugin.js $TMPJS/libs/sqlite.js
+    cp .downloads/TestFlightPlugin/www/testflight.js "$TMPJS/libs/testflight.js"
+    cp .downloads/PhoneGap-SQLitePlugin-iOS/iOS/www/SQLitePlugin.js "$TMPJS/libs/sqlite.js"
 else
     # Empty files, so RequireJS finds something.
     # echo > app/js/libs/cordova.js
-    echo > $TMPJS/libs/testflight.js
-    echo > $TMPJS/libs/sqlite.js
+    echo > "$TMPJS/libs/testflight.js"
+    echo > "$TMPJS/libs/sqlite.js"
 fi
 
 # Copy version number to Javascript
@@ -77,38 +77,38 @@ VERSION="`$JACKBONEGAP_PATH/jackbone version print`"
 sed -e "s/__VERSION__/$VERSION/" $JACKBONEGAP_PATH/js/version.js.in \
     | sed "s/__BUILD__/`date`/" \
     | sed "s/__RELEASE__/$BUILD_RELEASE/" \
-     > $TMPJS/version.js
+     > "$TMPJS/version.js"
 
 # Copy Jackbone.gap JS files to Application
-cp $JACKBONEGAP_PATH/js/*.js $TMPJS/
+cp "$JACKBONEGAP_PATH/js/*.js" "$TMPJS/"
 
 # Prepare CSS
-if test -x $PROJECT_PATH/build-css.sh; then
-    $PROJECT_PATH/build-css.sh || error "Custom Build CSS"
+if test -x "$PROJECT_PATH/build-css.sh"; then
+    "$PROJECT_PATH/build-css.sh" || error "Custom Build CSS"
 fi
-rsync -a $JACKBONEGAP_PATH/css/ build/tmp-css
-rsync -a app/css/ build/tmp-css
-cp -r app/js/libs/jquery.mobile build/tmp-css/
-cat $JACKBONEGAP_PATH/css/styles.css | sed "s/PLATFORM/$target/" > build/tmp-css/styles.css
+rsync -a "$JACKBONEGAP_PATH/css/" "build/tmp-css"
+rsync -a "app/css/ build/tmp-css"
+cp -r "app/js/libs/jquery.mobile" "build/tmp-css/"
+cat "$JACKBONEGAP_PATH/css/styles.css" | sed "s/PLATFORM/$target/" > "build/tmp-css/styles.css"
 
 # Compile and Optimize Javascript / CSS
-if [ x$BUILD_RELEASE == xYES ]; then
+if [ "x$BUILD_RELEASE" == "xYES" ]; then
     LESS_OPTIONS="--yui-compress"
 fi
 
 echo -n r
-node app/js/libs/requirejs/bin/r.js -o name='main' baseUrl="$TMPJS" out='build/www/js/main.js' findNestedDependencies=true mainConfigFile=$TMPJS/main.js $BUILD_JS > build/tmp/jackbone.out || error "Javascript build failed"
+node app/js/libs/requirejs/bin/r.js -o name='main' baseUrl="$TMPJS" out='build/www/js/main.js' findNestedDependencies=true mainConfigFile="$TMPJS/main.js" $BUILD_JS > build/tmp/jackbone.out || error "Javascript build failed"
 echo -n r
 node app/js/libs/requirejs/bin/r.js -o cssIn=build/tmp-css/styles.css out=build/tmp/styles.less > build/tmp/jackbone.out || error "CSS build failed"
 echo -n r
 node app/js/libs/less/bin/lessc $LESS_OPTIONS build/tmp/styles.less build/www/css/styles.css > build/tmp/jackbone.out || error "CSS build failed"
 echo -n r
 cp app/js/libs/requirejs/require.js build/www/js/require.js
-cp $JACKBONEGAP_PATH/js/worker-helper.js build/www/js
+cp "$JACKBONEGAP_PATH/js/worker-helper.js" build/www/js
 rm -f build/tmp/jackbone.out
  
 # Add "main.js" lines to itself.
-if [ x$BUILD_RELEASE == xYES ]; then
+if [ "x$BUILD_RELEASE" == "xYES" ]; then
     echo 'SOURCE_LINES = [];' >> build/www/js/main.js
 else
     cp build/www/js/main.js build/tmp/main.js &&\
@@ -117,16 +117,16 @@ else
 fi
 
 if  [ "x$BUILD_TESTING" = "xYES" ]; then
-    cp $JACKBONEGAP_PATH/html/qunit.html > build/www/index.html
+    cp "$JACKBONEGAP_PATH/html/qunit.html" > build/www/index.html
 else
-    sed "s/PROJECT_NAME/$PROJECT_NAME/" $JACKBONEGAP_PATH/html/index.html > build/www/index.html
+    sed "s/PROJECT_NAME/$PROJECT_NAME/" "$JACKBONEGAP_PATH/html/index.html" > build/www/index.html
 fi
 
 # Install Images
 mkdir -p build/www/img
-if test -x $PROJECT_PATH/build-images.sh; then
+if test -x "$PROJECT_PATH/build-images.sh"; then
     echo -n i
-    $PROJECT_PATH/build-images.sh || error "Custom Build Images"
+    "$PROJECT_PATH/build-images.sh" || error "Custom Build Images"
 fi
 if [ "x$BUILD_IMAGES" != "x" ]; then
     for i in $BUILD_IMAGES; do
@@ -139,13 +139,13 @@ if [ "x$BUILD_IMAGES" != "x" ]; then
             H=""
         fi
         echo -n i
-        $JACKBONEGAP_PATH/tools/buildimage.sh $FILE $W $H || exit "Resizing $FILE failed"
+        "$JACKBONEGAP_PATH/tools/buildimage.sh" "$FILE" $W $H || exit "Resizing $FILE failed"
     done
 else
     rsync --delete -a app/img/ build/www/img
 fi
 if [ x$target = xweb ]; then
-    $JACKBONEGAP_PATH/web/generate-assets.sh
+    "$JACKBONEGAP_PATH/web/generate-assets.sh"
 fi
 
 echo -n j
@@ -160,20 +160,20 @@ rm -f build/www/*.tmp
 # Install Sounds
 echo -n s
 mkdir -p build/www/snd
-if test -x $PROJECT_PATH/build-sounds.sh; then
-    $PROJECT_PATH/build-sounds.sh || error "Custom Build Sounds"
+if test -x "$PROJECT_PATH/build-sounds.sh"; then
+    "$PROJECT_PATH/build-sounds.sh" || error "Custom Build Sounds"
 fi
 rsync --delete -a app/snd/ build/www/snd
 
 echo
 
 # Compile iOS Application
-if [ x$BUILD_IOS = xYES ]; then
-    . $JACKBONEGAP_PATH/ios/build.sh
+if [ "x$BUILD_IOS" = "xYES" ]; then
+    . "$JACKBONEGAP_PATH/ios/build.sh"
 fi
 
 # Compile Android Application
-if [ x$BUILD_ANDROID = xYES ]; then
-    . $JACKBONEGAP_PATH/android/build.sh
+if [ "x$BUILD_ANDROID" = "xYES" ]; then
+    . "$JACKBONEGAP_PATH/android/build.sh"
 fi
 

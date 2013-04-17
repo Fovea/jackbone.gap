@@ -4,8 +4,8 @@ what=$2
 
 function clean_build() {
     rm -fr build
-    . $JACKBONEGAP_PATH/android/clean.sh
-    . $JACKBONEGAP_PATH/ios/clean.sh
+    . "$JACKBONEGAP_PATH/android/clean.sh"
+    . "$JACKBONEGAP_PATH/ios/clean.sh"
 }
 
 function clean_more() {

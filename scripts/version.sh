@@ -3,15 +3,15 @@
 # Read number number from VERSION file.
 # Adjust and apply version number to iOS project file.
 
-test -e $PROJECT_PATH/VERSION || error "Please create VERSION file with a X.Y version number."
-VERSION=`cat $PROJECT_PATH/VERSION`
+test -e "$PROJECT_PATH/VERSION" || error "Please create VERSION file with a X.Y version number."
+VERSION=`cat "$PROJECT_PATH/VERSION"`
 
-cd $PROJECT_PATH
+cd "$PROJECT_PATH"
 V1=`echo $VERSION|cut -d. -f1`
 V2=`echo $VERSION|cut -d. -f2`
 
-if test -e $PROJECT_PATH/config; then
-    . $PROJECT_PATH/config
+if test -e "$PROJECT_PATH/config"; then
+    . "$PROJECT_PATH/config"
 fi
 
 function usage
