@@ -28,11 +28,14 @@ function usage {
     echo " - init     "
     echo "            Download dependencies."
     echo
+    echo " - update"
+    echo "            Update dependencies."
+    echo
     echo " - build    "
-    echo "            Compile the project."
+    echo "            Compile your project."
     echo
     echo " - run      "
-    echo "            TODO."
+    echo "            Execute your app."
     echo
     echo " - archive  "
     echo "            TODO."

@@ -13,6 +13,6 @@
         "less":          "latest",
         "jackbone":      "latest",
         "plugman":       "latest",
-        "kassics":       "latest"
+        "kassics":       ">=0.0.5"
     }
 }
