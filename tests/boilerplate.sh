@@ -8,6 +8,7 @@ test -e "$JB" || exit 1
 
 mkdir -p "$TESTDIR"
 cd "$TESTDIR"
+rm -fr boilerplate-test
 "$JB" boilerplate boilerplate-test || exit 1
 cd boilerplate-test || exit 1
 cp config-sample config || exit 1
