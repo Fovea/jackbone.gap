@@ -51,7 +51,7 @@ TMPCSS=build/tmp-css
 echo "[BUILD] build/www"
 
 # Copy all our javascript to a temporary folder
-rsync -a app/js/ build/tmp-js
+rsync -a app/js/ build/tmp-js || error "Couldn't copy javascript"
 
 # Compile Handlebars Templates
 if test -x "$PROJECT_PATH/build-html.sh"; then
@@ -86,8 +86,8 @@ cp "$JACKBONEGAP_PATH/js/"*.js "$TMPJS/"
 if test -x "$PROJECT_PATH/build-css.sh"; then
     "$PROJECT_PATH/build-css.sh" || error "Custom Build CSS"
 fi
-rsync -a "$JACKBONEGAP_PATH/css/" "build/tmp-css"
-rsync -a app/css/ build/tmp-css
+rsync -a "$JACKBONEGAP_PATH/css/" "build/tmp-css" || error "Couldn't copy css"
+rsync -a app/css/ build/tmp-css || error "Couldn't copy css"
 cp -r "app/js/libs/jquery.mobile" "build/tmp-css/"
 cat "$JACKBONEGAP_PATH/css/styles.css" | sed "s/PLATFORM/$target/" > "build/tmp-css/styles.css"
 
@@ -142,7 +142,7 @@ if [ "x$BUILD_IMAGES" != "x" ]; then
         "$JACKBONEGAP_PATH/tools/buildimage.sh" "$FILE" $W $H || exit "Resizing $FILE failed"
     done
 else
-    rsync --delete -a app/img/ build/www/img
+    rsync --delete -a app/img/ build/www/img || error "Could't copy images"
 fi
 if [ x$target = xweb ]; then
     "$JACKBONEGAP_PATH/web/generate-assets.sh"
@@ -150,7 +150,7 @@ fi
 
 echo -n j
 mkdir -p build/www/css/jquery.mobile/images
-rsync -a app/js/libs/jquery.mobile/images/ build/www/css/jquery.mobile/images
+rsync -a app/js/libs/jquery.mobile/images/ build/www/css/jquery.mobile/images || error "Couldn't copy JQM images"
 if [ "x$BUILD_TESTING" = "xYES" ]; then
     mkdir -p build/www/js/libs/qunitjs/qunit
     cp app/js/libs/qunitjs/qunit/qunit.css build/www/js/libs/qunitjs/qunit/qunit.css
@@ -163,7 +163,7 @@ mkdir -p build/www/snd
 if test -x "$PROJECT_PATH/build-sounds.sh"; then
     "$PROJECT_PATH/build-sounds.sh" || error "Custom Build Sounds"
 fi
-rsync --delete -a app/snd/ build/www/snd
+rsync --delete -a app/snd/ build/www/snd || error "Couldn't copy sounds"
 
 echo
 
