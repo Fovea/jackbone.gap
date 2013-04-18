@@ -20,4 +20,4 @@ else
 fi
 
 "$JB" build web testing || exit 1
-"$JB" test web || exit 1
+"$JB" run || exit 1

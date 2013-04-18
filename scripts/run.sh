@@ -1,14 +1,17 @@
 #!/bin/bash
 
 function usage() {
-    echo "usage: jackbone run <web|ios|android>"
+    echo "usage: jackbone run"
     exit 1
 }
 
 # Read command line options
-target="$2"
+target=`cat "$PROJECT_PATH/build/config" | cut -d\  -f1`
+conf=`cat "$PROJECT_PATH/build/config" | cut -d\  -f2`
 
-if [ "x$target" = "xweb" ]; then
+if [ "x$target" = "xweb" ] && [ "x$conf" = "xtesting" ]; then
+    phantomjs tools/phantom-qunit-runner.js "$PROJECT_PATH/build/www/index.html"
+elif [ "x$target" = "xweb" ]; then
     echo
     echo Just open file://`pwd`/build/www/index.html
     echo

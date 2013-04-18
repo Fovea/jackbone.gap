@@ -22,35 +22,16 @@ function usage {
     echo "usage: $0 <command>"
     echo "commands:"
     echo
-    echo " - boilerplate"
-    echo "            Create a new Jackbone.gap project in current directory."
-    echo
-    echo " - init     "
-    echo "            Download dependencies."
-    echo
-    echo " - update"
-    echo "            Update dependencies."
-    echo
-    echo " - build    "
-    echo "            Compile your project."
-    echo
-    echo " - run      "
-    echo "            Execute your app."
-    echo
-    echo " - archive  "
-    echo "            TODO."
-    echo
-    echo " - clean    "
-    echo "            TODO."
-    echo
-    echo " - upload   "
-    echo "            TODO."
-    echo
-    echo " - version  "
-    echo "            Read and adjust version number from your VERSION file."
-    echo
-    echo " - help"
-    echo "            show this help message."
+    echo "- boilerplate  Create a new project."
+    echo "- init         Download dependencies."
+    echo "- update       Update dependencies."
+    echo "- build        Compile your project."
+    echo "- run          Execute your app."
+    echo "- archive      TODO."
+    echo "- clean        Delete generated files."
+    echo "- upload       TODO."
+    echo "- version      Manage your version number."
+    echo "- help         Show this help message."
     echo
     echo "Type '$0 <command> help' for more help on a specific command"
     echo

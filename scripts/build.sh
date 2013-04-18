@@ -37,6 +37,8 @@ else
     usage
 fi
 
+echo "$target $conf" > "$PROJECT_PATH/build/config"
+
 rm -fr ios/build
 
 mkdir -p build/tmp
@@ -169,11 +171,11 @@ echo
 
 # Compile iOS Application
 if [ "x$BUILD_IOS" = "xYES" ]; then
-    . "$JACKBONEGAP_PATH/ios/build.sh"
+    . "$JACKBONEGAP_PATH/ios/build.sh" || exit 1
 fi
 
 # Compile Android Application
 if [ "x$BUILD_ANDROID" = "xYES" ]; then
-    . "$JACKBONEGAP_PATH/android/build.sh"
+    . "$JACKBONEGAP_PATH/android/build.sh" || exit 1
 fi
 
