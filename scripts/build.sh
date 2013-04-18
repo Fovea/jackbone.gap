@@ -117,7 +117,7 @@ else
 fi
 
 if  [ "x$BUILD_TESTING" = "xYES" ]; then
-    cp "$JACKBONEGAP_PATH/html/qunit.html" > build/www/index.html
+    cp "$JACKBONEGAP_PATH/html/qunit.html" build/www/index.html
 else
     sed "s/PROJECT_NAME/$PROJECT_NAME/" "$JACKBONEGAP_PATH/html/index.html" > build/www/index.html
 fi

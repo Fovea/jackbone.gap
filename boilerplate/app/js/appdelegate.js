@@ -8,8 +8,9 @@ define([
   'events',
   'logger',
   'version',
-  'templates'
-], function($, _, Jackbone, Events, Logger, Version, Templates) {
+  'templates',
+  'testing'
+], function($, _, Jackbone, Events, Logger, Version, Templates, Testing) {
 
     var MenuView = Jackbone.View.extend({
         render: function () {
@@ -43,6 +44,13 @@ define([
     };
 
     var test = function () {
+        test("Application initialized", function () {
+             Testing.Chain.init();
+             Testing.Chain.add(0, 1000, function () { Jackbone.router.goto('menu'); });
+             Testing.Chain.add(0, 0,    function () { ok($('div[page-name=menu]').length === 1, 'Menu page exists'); }, 1);
+             Testing.Chain.add(0, 0,    function () { ok($('h1', $.mobile.activePage).text() === 'Menu', 'Menu page opened'); }, 1);
+             Testing.Chain.start();
+        });
     };
 
     return {
