@@ -29,9 +29,9 @@ BUILD_RELEASE=NO
 if [ "x$conf" = "xdebug" ] ; then
     BUILD_JS="optimize=none"
 elif [ "x$conf" = "xrelease" ] || [ "x$conf" = "xwww" ]; then
-    BUILD_JS="optimize=none"
     BUILD_RELEASE=YES
 elif [ "x$conf" = "xtesting" ]; then
+    BUILD_JS="optimize=none"
     BUILD_TESTING=YES
 else
     usage

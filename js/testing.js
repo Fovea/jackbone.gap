@@ -1,7 +1,6 @@
 define([
-    'qunit',
     'appdelegate'
-], function(QUnit, AppDelegate) {
+], function(AppDelegate) {
     /** 
      * @name Testing
      * @class [tests/testing] Tests runner.

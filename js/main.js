@@ -12,7 +12,6 @@ requirejs.config({
         backbone:     'libs/backbone/backbone',
         jquerymobile: 'libs/jquery.mobile/jquery.mobile',
         handlebars:   'libs/handlebars/dist/handlebars',
-        qunit:        'libs/qunitjs/qunit/qunit',
         testflight:   'libs/testflight',
         sqlite:       'libs/sqlite',
         kinetic:      'libs/kinetic',
@@ -39,9 +38,6 @@ requirejs.config({
         },
         handlebars: {
             exports: 'Handlebars'
-        },
-        qunit: {
-            exports: 'QUnit'
         },
         kinetic: {
             exports: 'Kinetic'
