@@ -20,11 +20,11 @@ define([
 
     var MyRouter = Jackbone.Router.extend({
         routes: {
-        // Pages
-        '':     'menu',
-        'menu': 'menu',
-        // Default - catch all
-        '*actions': 'defaultAction'
+            // Pages
+            '':     'menu',
+            'menu': 'menu',
+            // Default - catch all
+            '*actions': 'defaultAction'
         },
         menu: function () {
             this.openView('Menu', MenuView, {});
@@ -44,11 +44,11 @@ define([
     };
 
     var test = function () {
-        QUnit.test("Application initialized", function () {
-             Testing.Chain.init();
-             Testing.Chain.add(0, 1000, function () { Jackbone.router.goto('menu'); });
-             Testing.Chain.add(0, 0,    function () { ok($('div[page-name=menu]').length === 1, 'Menu page exists'); }, 1);
-             Testing.Chain.add(0, 0,    function () { ok($('h1', $.mobile.activePage).text() === 'Menu', 'Menu page opened'); }, 1);
+        QUnit.asyncTest("Application initialized", function (test) {
+             Testing.Chain.init(test);
+             Testing.Chain.add(   0, 1000, function () { Jackbone.router.goto('menu'); });
+             Testing.Chain.add(   0,    0, function () { ok($('div[page-name=menu]').length === 1, 'Menu page exists'); }, 1);
+             Testing.Chain.add(   0,    0, function () { ok($('h1', $.mobile.activePage).text() === 'Menu', 'Menu page opened'); }, 1);
              Testing.Chain.start();
         });
     };

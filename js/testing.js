@@ -1,6 +1,6 @@
 define([
-    'appdelegate'
-], function(AppDelegate) {
+    'jackbone'
+], function(Jackbone) {
     /** 
      * @name Testing
      * @class [tests/testing] Tests runner.
@@ -9,10 +9,10 @@ define([
     var Testing = {};
 
     /** Run all the tests (after 1000 ms). */
-    Testing.run = function() {
+    Testing.run = function(fn) {
         window.setTimeout(function() {
-            AppDelegate.test();
-            QUnit.load();
+            fn();
+            // QUnit.load();
         }, 1000);
     };
 
@@ -24,11 +24,12 @@ define([
     var TestChain = Testing.Chain = {};
 
     /** Initialize the chain. */
-    TestChain.init = function() {
+    TestChain.init = function(test) {
         QUnit.stop();
         this.t = 1000;
         this.expected = 0;
         this.failed = false;
+        this.test = test;
     };
 
     /** Add an element to the chain.
@@ -38,13 +39,14 @@ define([
      * @param nexpected Number of QUnit assertions expected (optional)
      */
     TestChain.add = function(before, after, fn, nexpected) {
+        var test = this.test;
         this.t += before;
         if (typeof nexpected === "number") {
             this.expected += nexpected;
         }
         setTimeout(function() {
             if (!this.failed)
-                fn();
+                fn.call(test);
         }, this.t);
         this.t += after + 50;
     };
@@ -53,9 +55,10 @@ define([
     TestChain.start = function() {
         QUnit.expect(this.expected);
         var endTest = function() {
-            QUnit.start();
+            Jackbone.router.goto('testing');
         }
         this.add(100, 0, endTest);
+        QUnit.start();
     };
 
     return Testing;

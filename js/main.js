@@ -105,7 +105,7 @@ function($, _, Backbone, Jackbone, Cordova, Testing, Logger, AppDelegate) {
 
         // Run the tests if testing is enabled
         if (testingEnabled) {
-            Testing.run();
+            AppDelegate.test();
         }
     }
     
