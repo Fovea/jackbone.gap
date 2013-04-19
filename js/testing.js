@@ -60,6 +60,9 @@ define([
     };
 
     TestChain.start = function() {
+        QUnit.done(function( details ) {
+            console.log("QUnit.done:" + details.total + ":" + details.failed + ":" + details.passed + ":" + details.runtime);
+        });
         setTimeout(function() {
             Jackbone.router.goto('testing');
             setTimeout(function() {

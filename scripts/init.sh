@@ -7,23 +7,17 @@
 
 test -e package.sh || error "package.sh not found."
 test -e package.json || error "package.json not found."
-. package.sh    # Load config
+
+# Load config
+. package.sh
+
+# Load package manager methods
+. "$JACKBONEGAP_PATH/tools/package-manager.sh"
 
 SYSTEM=`uname`
 
 mkdir -p "$LIBS_PATH"
 mkdir -p "$DOWNLOADS_PATH"
-
-# Check that necessary tools are available
-if ! which npm > /dev/null; then
-    error "Please install NodeJS to retrieve dependencies." "http://nodejs.org/download/"
-fi
-
-if ! which wget > /dev/null; then
-    error "Please install wget to retrieve dependencies." \
-            "- OSX: https://s3.amazonaws.com/techtach/files/wget/113/wget"
-            "- Linux: apt-get install wget"
-fi
 
 # Download and install dependencies available through NPM
 echo "--- NPM Packages"
@@ -40,65 +34,41 @@ fi
 
 # Download and install PhoneGap
 echo "--- PhoneGap"
-if ! test -e "$LIBS_PATH/phonegap" || [ `cat "$LIBS_PATH/phonegap/VERSION"` != "$PHONEGAP_VERSION" ]; then
-    rm -fr $LIBS_PATH/phonegap
-    test -e "$DOWNLOADS_PATH/phonegap-$PHONEGAP_VERSION.zip" || (wget --no-check-certificate -O "$DOWNLOADS_PATH/phonegap-$PHONEGAP_VERSION.zip" "$PHONEGAP_URL" || error "wget failed to download PhoneGap.")
-    unzip "$DOWNLOADS_PATH/phonegap-$PHONEGAP_VERSION.zip" -d "$DOWNLOADS_PATH" > /dev/null
-    mv "$DOWNLOADS_PATH/phonegap-$PHONEGAP_VERSION" "$LIBS_PATH/phonegap"
-fi
+httpPackageZIP "$PHONEGAP_URL" "$LIBS_PATH/phonegap"
 
 # Download and install JQuery.Mobile
 echo "--- JQuery.Mobile"
-if ! test -e "$JS_LIBS_PATH/jquery.mobile/jquery.mobile.js"; then
-    wget -O "$DOWNLOADS_PATH/jquery.mobile-$JQUERYMOBILE_VERSION.zip" "$JQUERYMOBILE_URL"
-    unzip "$DOWNLOADS_PATH/jquery.mobile-$JQUERYMOBILE_VERSION.zip" -d "$DOWNLOADS_PATH" > /dev/null || error "Could not extract jquery.mobile file"
-    mv "$DOWNLOADS_PATH/jquery.mobile-$JQUERYMOBILE_VERSION" "$JS_LIBS_PATH/jquery.mobile"
-    for i in "$JS_LIBS_PATH"/jquery.mobile/*; do
-        NAME_WITHOUT_VERSION_NUMBER=`echo $i | sed "s/-$JQUERYMOBILE_VERSION//g"`
-        mv "$i" "$NAME_WITHOUT_VERSION_NUMBER"
-    done
-fi
+httpPackageZIP "$JQUERYMOBILE_URL" "$JS_LIBS_PATH/jquery.mobile"
+cleanVersion "$JS_LIBS_PATH/jquery.mobile" "$JQUERYMOBILE_VERSION"
 
 # Download and install Kinetic
 echo "--- Kinetic"
-if ! test -e "$JS_LIBS_PATH/kinetic.js"; then
-    wget -O "$JS_LIBS_PATH/kinetic.js" "$KINETIC_JS" || error "wget failed to download kinetic.js"
-fi
+httpPackageJS "$KINETIC_JS" "$JS_LIBS_PATH/kinetic.js"
 
 # Download and install JQuery
 echo "--- JQuery"
-if ! test -e "$JS_LIBS_PATH/jquery/jquery.js"; then
-    mkdir -p "$JS_LIBS_PATH/jquery"
-    wget -O "$JS_LIBS_PATH/jquery/jquery.js" "$JQUERY_JS" || error "wget failed to download jquery.js"
-fi
+httpPackageJS "$JQUERY_JS" "$JS_LIBS_PATH/jquery/jquery.js"
 
 # Download and install Backbone.localStorage
-# [ NOT USED ]
-if ! test -e "$JS_LIBS_PATH/backbone.localstorage/backbone.localStorage.js"; then
-    mkdir -p "$JS_LIBS_PATH/backbone.localstorage/"
-    wget --no-check-certificate -O "$DOWNLOADS_PATH/backbone.localstorage.zip" "https://github.com/jeromegn/Backbone.localStorage/archive/master.zip" || error "wget failed to download backbone.localstorage"
-    unzip "$DOWNLOADS_PATH/backbone.localstorage" -d "$DOWNLOADS_PATH" > /dev/null
-    mv "$DOWNLOADS_PATH/Backbone.localStorage-master/backbone.localStorage"*.js "$JS_LIBS_PATH/backbone.localstorage/"
-fi
+httpPackageZIP "https://github.com/jeromegn/Backbone.localStorage/archive/master.zip" "$JS_LIBS_PATH/backbone.localstorage"
 
-function gitPull {
-    url="$1"
-    name=`basename "$url" .git`
-    if ! test -e "$DOWNLOADS_PATH/$name"; then
-        ( cd "$DOWNLOADS_PATH"; git clone "$url" || exit 1) || error "Could not download $name Plugin"
-    else
-        ( cd "$DOWNLOADS_PATH/$name"; git pull || exit 1) || error "Could not update $name Plugin"
-    fi
-}
-
-# Download a few Cordova plugins that uses Plugman
 if [ "x$SYSTEM" = "xDarwin" ]; then
+
+    # Download a few Cordova plugins that uses Plugman
     echo "--- TestFlight"
-    gitPull "git://github.com/j3k0/TestFlightPlugin.git"
+    gitPackage "git://github.com/j3k0/TestFlightPlugin.git"
     echo "--- SQLite iOS"
-    gitPull "git://github.com/j3k0/PhoneGap-SQLitePlugin-iOS.git"
+    gitPackage "git://github.com/j3k0/PhoneGap-SQLitePlugin-iOS.git"
+
+    # Download Fruitstrap, a tool to upload builds to an iOS device
+    echo "--- Fruitstrap"
+    gitPackage "git://github.com/j3k0/fruitstrap.git"
+    ( cd "$DOWNLOADS_PATH/fruitstrap" && make fruitstrap || exit 1) || error "Fruitstrap build failed"
 fi
+
+# SQLitePlugin for Android [NOT USED]
 echo "--- SQLite Android"
-gitPull "git://github.com/brodyspark/PhoneGap-SQLitePlugin-Android.git"
+gitPackage "git://github.com/brodyspark/PhoneGap-SQLitePlugin-Android.git"
+
 
 echo "--- DONE"

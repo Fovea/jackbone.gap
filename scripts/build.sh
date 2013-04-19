@@ -4,7 +4,7 @@
 cd "$PROJECT_PATH"
 
 function usage() {
-    echo "usage: jackbone build <web|ios|android> <debug|release|testing|www>"
+    echo "usage: jackbone build <web|ios-sim|ios-dev|android> <debug|release|testing|www>"
     exit 1
 }
 
@@ -15,7 +15,7 @@ conf="$3"
 if [ "x$target" = "xweb" ]; then
     BUILD_IOS=NO
     BUILD_ANDROID=NO
-elif [ "x$target" = "xios" ]; then
+elif [ "x$target" = "xios-sim" ] || [ "x$target" = "xios-dev" ]; then
     BUILD_IOS=YES
     BUILD_ANDROID=NO
 elif [ "x$target" = "xandroid" ]; then
@@ -37,10 +37,12 @@ else
     usage
 fi
 
+# Store information about currently built configuration.
+mkdir -p build
 echo "$target $conf" > "$PROJECT_PATH/build/config"
 
+# Prepare new directories
 rm -fr ios/build
-
 mkdir -p build/tmp
 mkdir -p build/tmp-js
 mkdir -p build/tmp-css

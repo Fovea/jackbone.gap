@@ -18,10 +18,10 @@ elif [ "x$target" = "xweb" ]; then
     echo Useful Chrome flags: --enable-memory-info --disable-web-security --allow-file-access-from-files
     echo Useful Safari: /Applications/Safari.app/Contents/MacOS/SafariForWebKitDevelopment
     echo
-elif [ "x$target" = "xios" ]; then
-    . "$JACKBONEGAP_PATH/ios/run.sh"
+elif [ "x$target" = "xios-sim" ] || [ "x$target" = "xios-dev" ]; then
+    . "$JACKBONEGAP_PATH/ios/run.sh" || exit 1
 elif [ "x$target" = "xandroid" ]; then
-    . "$JACKBONEGAP_PATH/android/run.sh"
+    . "$JACKBONEGAP_PATH/android/run.sh" || exit 1
 else
     usage
 fi

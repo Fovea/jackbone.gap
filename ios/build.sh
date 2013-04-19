@@ -47,6 +47,7 @@ EOF
     fi
     cp "$JACKBONEGAP_PATH/ios/config.xml" "$IOS_PROJECT_PATH/$PROJECT_NAME/config.xml"
     cp "$JACKBONEGAP_PATH/ios/archive" "$IOS_PROJECT_PATH/cordova/archive"
+    cp "$JACKBONEGAP_PATH/ios/build-dev" "$IOS_PROJECT_PATH/cordova/build-dev"
 
     # Generate icons and splash screens.
     . "$JACKBONEGAP_PATH/ios/generate-assets.sh"
@@ -83,20 +84,23 @@ EOF
     # Copy TestFlight lib to iOS folder... YAH
     # That's a bloody hack... but it works.
     for d in "~/Library/Developer/Xcode/DerivedData/$PROJECT_NAME"-*/Build/Products/Debug-iphoneos/; do
-        cp "$IOS_PROJECT_PATH/build/libTestFlight.a" "$d"
+        test -e "$d" && cp "$IOS_PROJECT_PATH/build/libTestFlight.a" "$d"
     done
 
+    if [ "x$target" = "xios-dev" ]; then
+        devext="-dev"
+    fi
     # Build
     if [ "x$BUILD_RELEASE" = "xYES" ]; then
-        "$IOS_PROJECT_PATH/cordova/release" | tee "$EFILE" | awk '{ printf "."; fflush }' || error "iOS build failed"
+        "$IOS_PROJECT_PATH/cordova/release$devext" | tee "$EFILE" | awk '{ printf "."; fflush }' || error "iOS build failed"
     else
-        "$IOS_PROJECT_PATH/cordova/build"  | tee "$EFILE" | awk '{ printf "."; fflush }' || error "iOS build failed"
+        "$IOS_PROJECT_PATH/cordova/build$devext"  | tee "$EFILE" | awk '{ printf "."; fflush }' || error "iOS build failed"
     fi
     rm "$EFILE"
 
     echo
     echo '[DONE]'
-    echo 'run' $PROJECT_NAME 'with "jackbone run ios"'
+    echo 'run' "$PROJECT_NAME" 'with "jackbone run"'
 else
     echo "This script should be launched by root dir's build script."
     exit 1
