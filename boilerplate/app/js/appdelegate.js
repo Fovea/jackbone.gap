@@ -44,13 +44,18 @@ define([
     };
 
     var test = function () {
+        var T = Testing.Chain;
+        var $a = function (selector) { return $(selector, $.mobile.activePage); };
+
         QUnit.asyncTest("Application initialized", function (test) {
-             Testing.Chain.init(test);
-             Testing.Chain.add(   0, 1000, function () { Jackbone.router.goto('menu'); });
-             Testing.Chain.add(   0,    0, function () { ok($('div[page-name=menu]').length === 1, 'Menu page exists'); }, 1);
-             Testing.Chain.add(   0,    0, function () { ok($('h1', $.mobile.activePage).text() === 'Menu', 'Menu page opened'); }, 1);
-             Testing.Chain.start();
+             T.init(test);
+             T.add(0, 1000, function () { Jackbone.router.goto('menu'); });
+             T.add(0,    0, function () { ok($('div[page-name=menu]').length === 1, 'Menu page exists'); }, 1);
+             T.add(0,    0, function () { ok($a('h1').text() === 'Menu', 'Menu page opened'); }, 1);
+             T.finish();
         });
+
+        T.start();
     };
 
     return {

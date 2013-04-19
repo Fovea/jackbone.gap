@@ -1,3 +1,3 @@
 #!/bin/bash
-TESTNAME='boilerplate'
+TESTNAME="navigation"
 . `dirname $0`/test-script.sh

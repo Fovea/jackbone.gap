@@ -23,9 +23,12 @@ define([
      */
     var TestChain = Testing.Chain = {};
 
+    /** Useful when generating fake clicks */
+    TestChain.fakeEvent = { preventDefault: function() {} };
+
     /** Initialize the chain. */
     TestChain.init = function(test) {
-        QUnit.stop();
+        this.totalTime = (this.totalTime || 0) + (this.t || 0) + 1000;
         this.t = 1000;
         this.expected = 0;
         this.failed = false;
@@ -52,14 +55,17 @@ define([
     };
 
     /** Launch execution of the chain.  */
-    TestChain.start = function() {
+    TestChain.finish = function() {
         QUnit.expect(this.expected);
-        var endTest = function() {
-            Jackbone.router.goto('testing');
-        }
-        this.add(100, 0, endTest);
-        QUnit.start();
     };
 
+    TestChain.start = function() {
+        setTimeout(function() {
+            Jackbone.router.goto('testing');
+            setTimeout(function() {
+                QUnit.start();
+            }, 500);
+        }, this.totalTime + this.t + 100);
+    };
     return Testing;
 });

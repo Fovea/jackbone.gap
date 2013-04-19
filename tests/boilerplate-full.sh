@@ -8,9 +8,9 @@ test -e "$JB" || exit 1
 
 mkdir -p "$TESTDIR"
 cd "$TESTDIR"
-rm -fr boilerplate-test
-"$JB" boilerplate boilerplate-test || exit 1
-cd boilerplate-test || exit 1
+rm -fr boilerplate-full
+"$JB" boilerplate boilerplate-full || exit 1
+cd boilerplate-full || exit 1
 cp config-sample config || exit 1
 "$JB" init || exit 1
 "$JB" build web testing || exit 1

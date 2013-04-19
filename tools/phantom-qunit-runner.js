@@ -125,13 +125,14 @@
             });
 
             QUnit.done(function(result) {
-                console.log('Took ' + result.runtime +  'ms to run ' + result.total + ' tests. ' + result.passed + ' passed, ' + result.failed + ' failed.');
-
-                if (typeof window.callPhantom === 'function') {
-                    window.callPhantom({
-                        'name': 'QUnit.done',
-                        'data': result
-                    });
+                if (result.total !== 0 || result.passed !== 0 || result.failed !== 0) {
+                    console.log('Took ' + result.runtime +  'ms to run ' + result.total + ' tests. ' + result.passed + ' passed, ' + result.failed + ' failed.');
+                    if (typeof window.callPhantom === 'function') {
+                        window.callPhantom({
+                            'name': 'QUnit.done',
+                            'data': result
+                        });
+                    }
                 }
             });
         }, false);
