@@ -44,7 +44,7 @@ define([
     };
 
     var test = function () {
-        test("Application initialized", function () {
+        QUnit.test("Application initialized", function () {
              Testing.Chain.init();
              Testing.Chain.add(0, 1000, function () { Jackbone.router.goto('menu'); });
              Testing.Chain.add(0, 0,    function () { ok($('div[page-name=menu]').length === 1, 'Menu page exists'); }, 1);
