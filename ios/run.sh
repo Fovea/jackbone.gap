@@ -20,7 +20,7 @@ elif [ "x$target" = "xios-dev" ]; then
     fi
 
     # Give time to previous fruitstrap instance to release the device.
-    sleep 1
+    sleep 5
 
     if [ "x$conf" = "xtesting" ]; then
         cat << EOF > "$GDB_COMMANDS_FILE"
@@ -51,8 +51,7 @@ EOF
         passed=`echo $result | cut -d: -f4`
         echo "QUnit Results:"
         echo "Total: $total, Failed: $failed, Passed: $passed"
-        [ "x$failed" != "x0" ] && exit 1
-
+        [ "x$failed" != "x0" ] && exit 1 || exit 0
     else
         echo 'continue' > "$GDB_COMMANDS_FILE"
         "$FRUITSTRAP" -b "$IOS_PROJECT_PATH/build/$PROJECT_NAME.app" -t 5 -d -x "$GDB_COMMANDS_FILE" || error "Failed to install to device"
