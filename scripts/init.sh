@@ -70,5 +70,11 @@ fi
 echo "--- SQLite Android"
 gitPackage "git://github.com/brodyspark/PhoneGap-SQLitePlugin-Android.git"
 
+# XML Manipulation
+echo "--- XML Starlet"
+httpPackageTGZ "http://sourceforge.net/projects/xmlstar/files/latest/download" "$LIBS_PATH/xmlstarlet"
+if test ! -e "$LIBS_PATH/xmlstarlet/xml"; then
+    ( cd "$LIBS_PATH/xmlstarlet" && ./configure && make || exit 1 ) > /dev/null || error "Failed to build xmlstarlet"
+fi
 
 echo "--- DONE"

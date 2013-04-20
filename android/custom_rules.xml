@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Checklist">
+    <target name="-package-resources">
+        <echo>Packaging resources</echo>
+        <aapt executable="${aapt}"
+                command="package"
+                versioncode="${version.code}"
+                debug="${build.packaging.debug}"
+                manifest="AndroidManifest.xml"
+                assets="${asset.absolute.dir}"
+                androidjar="${project.target.android.jar}"
+                apkfolder="${out.absolute.dir}"
+                resourcefilename="${resource.package.file.name}"
+                resourcefilter="${aapt.resource.filter}"
+                libraryResFolderPathRefid="project.library.res.folder.path"
+                libraryPackagesRefid="project.library.packages"
+                libraryRFileRefid="project.library.bin.r.file.path">
+            <res path="${resource.absolute.dir}" />
+
+            <!-- <nocompress /> forces no compression on any files in assets or res/raw -->
+            <nocompress extension="js" />
+            <!-- nocompress / -->
+        </aapt>
+    </target>
+</project>

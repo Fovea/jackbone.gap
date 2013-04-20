@@ -51,6 +51,23 @@ function httpPackageZIP {
     fi
 }
 
+# Parameters URL OUTPUT_DIR
+function httpPackageTGZ {
+    url="$1"
+    outdir="$2"
+
+    file=`echo "$url"|cut -d/ -f3-|sed 's/\//-/g'`
+
+    if test ! -e "$DOWNLOADS_PATH/$file" || test ! -e "$outdir"; then
+        test -e "$DOWNLOADS_PATH/$file" || wget --no-check-certificate -O "$DOWNLOADS_PATH/$file" "$url" || error "wget failed to download $url."
+        rm -fr "$DOWNLOADS_PATH/tmp"
+        mkdir -p "$DOWNLOADS_PATH/tmp"
+        (cd "$DOWNLOADS_PATH/tmp" ; tar xzf "$DOWNLOADS_PATH/$file" || exit 1) || error "failed to extract $file"
+        rm -fr "$outdir"
+        mv "$DOWNLOADS_PATH"/tmp/* "$outdir"
+    fi
+}
+
 function httpPackageJS {
     url="$1"
     file="$2"
