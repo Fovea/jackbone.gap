@@ -18,10 +18,12 @@ if [ "x$BUILD_IOS" = "xYES" ]; then
     mkdir -p "$IOS_PROJECT_PATH"
 
     # Create PhoneGap iOS Project
+    echo -n c
     "$LIBS_PATH/phonegap/lib/ios/bin/create" --shared "$IOS_PROJECT_PATH" "$IOS_BUNDLE_ID" "$PROJECT_NAME"
 
     # Patch the project.
-    patch -p0 << EOF > /dev/null
+    echo -n p
+    patch -l -p0 << EOF > /dev/null || error "Patch failed"
 --- $IOS_PROJECT_PATH/$PROJECT_NAME.xcodeproj/project.pbxproj	2013-03-23 09:24:16.000000000 +0200
 +++ $IOS_PROJECT_PATH/$PROJECT_NAME.xcodeproj/project.pbxproj	2013-03-23 11:28:31.000000000 +0200
 @@ -530,7 +530,7 @@
@@ -42,6 +44,7 @@ if [ "x$BUILD_IOS" = "xYES" ]; then
             SKIP_INSTALL = NO;
             USER_HEADER_SEARCH_PATHS = "";
 EOF
+    echo -n c
     if test -e "$PROJECT_PATH/ios/Info.plist"; then
         cp "$PROJECT_PATH/ios/Info.plist" "$IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist"
     fi
@@ -50,6 +53,7 @@ EOF
     cp "$JACKBONEGAP_PATH/ios/build-dev" "$IOS_PROJECT_PATH/cordova/build-dev"
 
     # Generate icons and splash screens.
+    echo -n g
     . "$JACKBONEGAP_PATH/ios/generate-assets.sh"
 
     # Remove useless assets.
@@ -79,7 +83,9 @@ EOF
     rsync -a build/www/ "$IOS_PROJECT_PATH/www"
     # Remove version number from cordova.js
     . "$JACKBONEGAP_PATH/package.sh" # PHONEGAP_VERSION is stored here.
-    mv "$IOS_PROJECT_PATH/www/cordova-$PHONEGAP_VERSION.js" "$IOS_PROJECT_PATH/www/js/cordova.js"
+    if test -e "$IOS_PROJECT_PATH/www/cordova-$PHONEGAP_VERSION.js"; then
+        mv "$IOS_PROJECT_PATH/www/cordova-$PHONEGAP_VERSION.js" "$IOS_PROJECT_PATH/www/js/cordova.js"
+    fi
 
     # Copy TestFlight lib to iOS folder... YAH
     # That's a bloody hack... but it works.
