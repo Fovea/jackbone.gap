@@ -13,9 +13,9 @@ export JACKBONEGAP_PATH="`pwd`"
 function error() {
     test -e "$EFILE" && cat "$EFILE"
     echo
-    echo "[ERROR] $1"
-    test "x$2" != "x" && echo "        $2"
-    test "x$3" != "x" && echo "        $3"
+    echo -e "[ERROR] \033[1m\033[31m$1\033[0m"
+    test "x$2" != "x" && echo -e "        \033[31m$2\033[0m"
+    test "x$3" != "x" && echo -e "        \033[31m$3\033[0m"
     echo
     exit  1
 }

@@ -8,9 +8,17 @@ function usage() {
     exit 1
 }
 
-# Read command line options
-target="$2"
-conf="$3"
+# If the project was already build once, let's use previous parameters as defaults.
+if test -e "$PROJECT_PATH/build/config"; then
+    target="`cat "$PROJECT_PATH/build/config" | cut -d\  -f1`"
+    conf="`cat "$PROJECT_PATH/build/config" | cut -d\  -f2`"
+fi
+
+# Then read command line options
+if [ "x$3" != "x" ]; then
+    target="$2"
+    conf="$3"
+fi
 
 if [ "x$target" = "xweb" ]; then
     BUILD_IOS=NO
@@ -36,6 +44,9 @@ elif [ "x$conf" = "xtesting" ]; then
 else
     usage
 fi
+
+echo -e "Building for target \033[32m$target\033[0m, \033[32m$conf\033[0m configuration."
+echo "---------------------------------------------------"
 
 # Store information about currently built configuration.
 mkdir -p build

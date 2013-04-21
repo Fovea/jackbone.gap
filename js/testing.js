@@ -29,7 +29,7 @@ define([
     /** Initialize the chain. */
     TestChain.init = function(test) {
         this.totalTime = (this.totalTime || 0) + (this.t || 0) + 1000;
-        this.t = 1000;
+        this.t = 2000;
         this.expected = 0;
         this.failed = false;
         this.test = test;
@@ -43,7 +43,7 @@ define([
      */
     TestChain.add = function(before, after, fn, nexpected) {
         var test = this.test;
-        this.t += before;
+        this.t += before + 100;
         if (typeof nexpected === "number") {
             this.expected += nexpected;
         }
@@ -51,7 +51,7 @@ define([
             if (!this.failed)
                 fn.call(test);
         }, this.t);
-        this.t += after + 50;
+        this.t += after + 100;
     };
 
     /** Launch execution of the chain.  */
