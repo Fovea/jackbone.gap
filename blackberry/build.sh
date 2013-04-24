@@ -43,7 +43,7 @@ if [ x$BUILD_BLACKBERRY = xYES ]; then
 
     if test ! -e "$PROJECT_PATH/blackberry/project.properties"; then
         mkdir -p "$PROJECT_PATH/blackberry"
-        cp "$BLACKBERRY_BUNDLE_ID/project.properties" "$PROJECT_PATH/project.properties"
+        cp "$BLACKBERRY_PROJECT_PATH/project.properties" "$PROJECT_PATH/project.properties"
         error "Edit the blackberry/project.properties to configure BlackBerry SDK."
     fi
     cp "$PROJECT_PATH/blackberry/project.properties" "$BLACKBERRY_PROJECT_PATH/project.properties"
