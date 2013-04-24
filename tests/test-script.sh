@@ -34,3 +34,8 @@ if test -e /Developer/Applications/Xcode.app; then
     "$JB" build ios-dev testing
     "$JB" run
 fi
+
+if test -e "/Developer/SDKs/Research In Motion/BlackBerry WebWorks SDK for TabletOS 2.2.0.5/bbwp"; then
+    "$JB" build blackberry-playbook testing
+    "$JB" run
+fi

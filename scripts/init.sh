@@ -50,21 +50,23 @@ echo "--- JQuery"
 httpPackageJS "$JQUERY_JS" "$JS_LIBS_PATH/jquery/jquery.js"
 
 # Download and install Backbone.localStorage
+echo "--- Backbone.localStorage"
 httpPackageZIP "https://github.com/jeromegn/Backbone.localStorage/archive/master.zip" "$JS_LIBS_PATH/backbone.localstorage"
 
 # Download GitHub's collection of PhoneGap plugins.
-echo "--- PhoneGap Plugins"
-gitPackage "git://github.com/phonegap/phonegap-plugins.git"
+# echo "--- PhoneGap Plugins"
+# gitPackage "git://github.com/phonegap/phonegap-plugins.git"
 
 if [ "x$SYSTEM" = "xDarwin" ]; then
 
     # Download a few Cordova plugins that uses Plugman
     echo "--- TestFlight"
     gitPackage "git://github.com/j3k0/TestFlightPlugin.git"
+
     echo "--- SQLite iOS"
     gitPackage "git://github.com/j3k0/PhoneGap-SQLitePlugin-iOS.git"
 
-    # Download Fruitstrap, a tool to upload builds to an iOS device
+    # Download Fruitstrap, a tool to upload builds to an iOS device from command line
     echo "--- Fruitstrap"
     gitPackage "git://github.com/j3k0/fruitstrap.git"
     ( cd "$DOWNLOADS_PATH/fruitstrap" && make fruitstrap || exit 1) || error "Fruitstrap build failed"

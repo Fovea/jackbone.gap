@@ -10,12 +10,7 @@ export EFILE="$PROJECT_PATH/build/tmp/jackbone.out"
 cd `dirname "$0"`
 export JACKBONEGAP_PATH="`pwd`"
 
-if [ "x$TERM" = "xxterm" ]; then
-    export T_BOLD="\033[1m"
-    export T_RED="\033[31m"
-    export T_GREEN="\033[32m"
-    export T_RESET="\033[0m"
-fi
+. tools/functions.sh
 
 echo -ne "$T_GREEN"
 echo -e "      _            _    _                      "
@@ -26,17 +21,6 @@ echo -e "| |__| | (_| | (__|   <| |_) | (_) | | | |  __/"
 echo -e " \____/ \__,_|\___|_|\_\_.__/ \___/|_| |_|\___|"
 echo -e "$T_RESET"
                             
-                            
-
-function error() {
-    test -e "$EFILE" && cat "$EFILE"
-    echo -ne "$T_BOLD[ERROR] $T_RED"; echo -n "$1"; echo -e "$T_RESET"
-    test "x$2" != "x" && echo -e "        $T_RED$2$T_RESET"
-    test "x$3" != "x" && echo -e "        $T_RED$3$T_RESET"
-    echo
-    exit  1
-}
-
 function usage {
     echo "usage: $0 <command>"
     echo "commands:"

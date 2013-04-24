@@ -10,15 +10,13 @@ if [ "x$target" = "xblackberry-10" ] || [ "x$target" = "xblackberry-qnx" ] || [ 
         platform="$2"
     fi
 
-    cd "$BLACKBERRY_PROJECT_PATH"
-    if [ "x$platform" = "xplaybook" ]; then
-        ant playbook load-device
-    elif [ "x$platform" = "xblackberry" ]; then
-        ant blackberry load-device
-    elif [ "x$platform" = "xqnx" ]; then
-        ant qnx load-device
+    if [ "x$conf" = "xrelease" ]; then
+        ant_target="load-device"
     else
-        error "Unknown blackberry platform: $platform"
+        ant_target="debug-device"
     fi
+
+    cd "$BLACKBERRY_PROJECT_PATH"
+    ant $platform $ant_target
 fi
 

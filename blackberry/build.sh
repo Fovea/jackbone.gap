@@ -60,6 +60,9 @@ if [ x$BUILD_BLACKBERRY = xYES ]; then
     # This will hopefully be solved soon so this hack can be removed...
     cp "$JACKBONEGAP_PATH/blackberry/playbook.xml" "$BLACKBERRY_PROJECT_PATH/playbook.xml"
 
+    # Generate assets
+    . "$JACKBONEGAP_PATH/blackberry/generate-assets.sh" || error "Failed to generate Android assets"
+
     # Build
     cd "$BLACKBERRY_PROJECT_PATH"
     ant $platform build

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. "$JACKBONEGAP_PATH/tools/functions.sh"
+
 # Check that necessary tools are available
 if ! which npm > /dev/null; then
     error "Please install NodeJS to retrieve dependencies." "http://nodejs.org/download/"

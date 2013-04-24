@@ -135,18 +135,19 @@ if [ "x$BUILD_RELEASE" == "xYES" ]; then
     LESS_OPTIONS="--yui-compress"
 fi
 
-echo -n r
+echo -n J
 node app/js/libs/requirejs/bin/r.js -o name='main' baseUrl="$TMPJS" out='build/www/js/main.js' findNestedDependencies=true mainConfigFile="$TMPJS/main.js" $BUILD_JS > build/tmp/jackbone.out || error "Javascript build failed"
-echo -n r
+echo -n a
 node app/js/libs/requirejs/bin/r.js -o cssIn=build/tmp-css/styles.css out=build/tmp/styles.less > build/tmp/jackbone.out || error "CSS build failed"
-echo -n r
+echo -n c
 node app/js/libs/less/bin/lessc $LESS_OPTIONS build/tmp/styles.less build/www/css/styles.css > build/tmp/jackbone.out || error "CSS build failed"
-echo -n r
+echo -n k
 cp app/js/libs/requirejs/require.js build/www/js/require.js
 cp "$JACKBONEGAP_PATH/js/worker-helper.js" build/www/js
 rm -f build/tmp/jackbone.out
  
 # Add "main.js" lines to itself.
+echo -n b
 if [ "x$BUILD_RELEASE" == "xYES" ]; then
     echo 'SOURCE_LINES = [];' >> build/www/js/main.js
 else
@@ -155,6 +156,7 @@ else
         awk 'BEGIN { print "SOURCE_LINES = ["; } { printf "\"%s\",\n", $0 } END { print "\"\"];" }' >> build/www/js/main.js
 fi
 
+echo -n o
 if  [ "x$BUILD_TESTING" = "xYES" ]; then
     cp "$JACKBONEGAP_PATH/html/qunit.html" build/www/index.html
 else
@@ -162,11 +164,13 @@ else
 fi
 
 # Install Images
+echo -n n
 mkdir -p build/www/img
 if test -x "$PROJECT_PATH/build-images.sh"; then
-    echo -n i
     "$PROJECT_PATH/build-images.sh" || error "Custom Build Images"
 fi
+
+echo -n e
 if [ "x$BUILD_IMAGES" != "x" ]; then
     for i in $BUILD_IMAGES; do
         FILE=`echo $i | cut -d@ -f1`
@@ -177,17 +181,20 @@ if [ "x$BUILD_IMAGES" != "x" ]; then
         else
             H=""
         fi
-        echo -n i
+        echo -n .
         "$JACKBONEGAP_PATH/tools/buildimage.sh" "$FILE" $W $H || exit "Resizing $FILE failed"
     done
 else
     rsync --delete -a app/img/ build/www/img || error "Could't copy images"
 fi
+
+echo -n .
+
 if [ x$target = xweb ]; then
     "$JACKBONEGAP_PATH/web/generate-assets.sh"
 fi
 
-echo -n j
+echo -n o
 mkdir -p build/www/css/jquery.mobile/images
 rsync -a app/js/libs/jquery.mobile/images/ build/www/css/jquery.mobile/images || error "Couldn't copy JQM images"
 if [ "x$BUILD_TESTING" = "xYES" ]; then
@@ -197,7 +204,7 @@ fi
 rm -f build/www/*.tmp
 
 # Install Sounds
-echo -n s
+echo -n k
 mkdir -p build/www/snd
 if test -x "$PROJECT_PATH/build-sounds.sh"; then
     "$PROJECT_PATH/build-sounds.sh" || error "Custom Build Sounds"
