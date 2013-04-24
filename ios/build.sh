@@ -4,7 +4,7 @@
 #
 if [ "x$BUILD_IOS" = "xYES" ]; then
 
-    echo "[BUILD] build/ios"
+    echo -e "${T_BOLD}[BUILD] build/ios${T_RESET}"
 
     IOS_PROJECT_PATH="$PROJECT_PATH/build/ios/$PROJECT_NAME"
 
@@ -105,8 +105,6 @@ EOF
     rm "$EFILE"
 
     echo
-    echo '[DONE]'
-    echo 'run' "$PROJECT_NAME" 'with "jackbone run"'
 else
     echo "This script should be launched by root dir's build script."
     exit 1

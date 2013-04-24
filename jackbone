@@ -10,12 +10,29 @@ export EFILE="$PROJECT_PATH/build/tmp/jackbone.out"
 cd `dirname "$0"`
 export JACKBONEGAP_PATH="`pwd`"
 
+if [ "x$TERM" = "xxterm" ]; then
+    export T_BOLD="\033[1m"
+    export T_RED="\033[31m"
+    export T_GREEN="\033[32m"
+    export T_RESET="\033[0m"
+fi
+
+echo -ne "$T_GREEN"
+echo -e "      _            _    _                      "
+echo -e "     | |          | |  | |                     "
+echo -e "     | | __ _  ___| | _| |__   ___  _ __   ___ "
+echo -e " _   | |/ _' |/ __| |/ / '_ \ / _ \| '_ \ / _ \\"
+echo -e "| |__| | (_| | (__|   <| |_) | (_) | | | |  __/"
+echo -e " \____/ \__,_|\___|_|\_\_.__/ \___/|_| |_|\___|"
+echo -e "$T_RESET"
+                            
+                            
+
 function error() {
     test -e "$EFILE" && cat "$EFILE"
-    echo
-    echo -e "[ERROR] \033[1m\033[31m$1\033[0m"
-    test "x$2" != "x" && echo -e "        \033[31m$2\033[0m"
-    test "x$3" != "x" && echo -e "        \033[31m$3\033[0m"
+    echo -ne "$T_BOLD[ERROR] $T_RED"; echo -n "$1"; echo -e "$T_RESET"
+    test "x$2" != "x" && echo -e "        $T_RED$2$T_RESET"
+    test "x$3" != "x" && echo -e "        $T_RED$3$T_RESET"
     echo
     exit  1
 }
@@ -24,16 +41,16 @@ function usage {
     echo "usage: $0 <command>"
     echo "commands:"
     echo
-    echo "- boilerplate  Create a new project."
-    echo "- init         Download dependencies."
-    echo "- update       Update dependencies."
-    echo "- build        Compile your project."
-    echo "- run          Execute your app."
-    echo "- archive      TODO."
-    echo "- clean        Delete generated files."
-    echo "- upload       TODO."
-    echo "- version      Manage your version number."
-    echo "- help         Show this help message."
+    echo -e "- ${T_BOLD}boilerplate${T_RESET}  Create a new project."
+    echo -e "- ${T_BOLD}init${T_RESET}         Download dependencies."
+    echo -e "- ${T_BOLD}update${T_RESET}       Update dependencies."
+    echo -e "- ${T_BOLD}build${T_RESET}        Compile your project."
+    echo -e "- ${T_BOLD}run${T_RESET}          Execute your app."
+    echo -e "- ${T_BOLD}archive${T_RESET}      TODO."
+    echo -e "- ${T_BOLD}clean${T_RESET}        Delete generated files."
+    echo -e "- ${T_BOLD}upload${T_RESET}       TODO."
+    echo -e "- ${T_BOLD}version${T_RESET}      Manage your version number."
+    echo -e "- ${T_BOLD}help${T_RESET}         Show this help message."
     echo
     echo "Type '$0 <command> help' for more help on a specific command"
     echo

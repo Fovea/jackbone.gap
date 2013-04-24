@@ -13,7 +13,7 @@ if [ "x$target" = "xweb" ] && [ "x$conf" = "xtesting" ]; then
     phantomjs tools/phantom-qunit-runner.js "$PROJECT_PATH/build/www/index.html"
 elif [ "x$target" = "xweb" ]; then
     echo
-    echo Just open file://`pwd`/build/www/index.html
+    echo Just open file://$PROJECT_PATH/build/www/index.html
     echo
     echo Useful Chrome flags: --enable-memory-info --disable-web-security --allow-file-access-from-files
     echo Useful Safari: /Applications/Safari.app/Contents/MacOS/SafariForWebKitDevelopment
@@ -22,6 +22,8 @@ elif [ "x$target" = "xios-sim" ] || [ "x$target" = "xios-dev" ]; then
     . "$JACKBONEGAP_PATH/ios/run.sh" || exit 1
 elif [ "x$target" = "xandroid" ]; then
     . "$JACKBONEGAP_PATH/android/run.sh" || exit 1
+elif [ "x$target" = "xblackberry-10" ] || [ "x$target" = "xblackberry-qnx" ] || [ "x$target" = "xblackberry-playbook" ]; then
+    . "$JACKBONEGAP_PATH/blackberry/run.sh" || exit 1
 else
     usage
 fi

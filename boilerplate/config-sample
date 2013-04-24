@@ -3,7 +3,13 @@
 #
 PROJECT_NAME="MyProject"
 
-# Should iOS archive been built
+# Images to build
+BUILD_IMAGES=""
+
+# IOS
+# -----
+
+# Should iOS archive been built?
 BUILD_IOS="NO"
 
 # ID of the iOS bundle (should match provisioning profile).
@@ -17,9 +23,26 @@ PROVISIONING_PROFILE_ID=""
 # Developer signing identity to use.
 DEVELOPER_NAME="iPhone Distribution: Fovea"
 
-# Should Android archive been built.
+# ANDROID
+# -------
+
+# Should Android archive been built?
 BUILD_ANDROID="NO"
 
 # ID of the Android bundle
 ANDROID_BUNDLE_ID="cc.fovea.myproject"
 
+# BLACKBERRY
+# ----------
+
+# Should Blackberry archive been built?
+BUILD_BLACKBERRY="NO"
+
+# ID of the Blackberry bundle
+BLACKBERRY_BUNDLE_ID="cc.fovea.myproject"
+
+# Path of the SDKs BBWP and Simulator tools.
+BLACKBERRY_BBWP_DIR=""
+PLAYBOOK_BBWP_DIR="/Developer/SDKs/Research In Motion/BlackBerry WebWorks SDK for TabletOS 2.2.0.5/bbwp"
+QNX_BBWP_DIR=""
+BLACKBERRY_SIM_DIR=""

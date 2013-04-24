@@ -1,6 +1,8 @@
 #!/bin/bash
 if [ x$BUILD_ANDROID = xYES ]; then
 
+    echo -e "${T_BOLD}[BUILD] build/android${T_RESET}"
+
     which android && which adb || error "Please install Android SDK, make sure tools and platform-tools are in your PATH"
 
     ANDROID_PROJECT_PATH="$PROJECT_PATH/build/android/$PROJECT_NAME"

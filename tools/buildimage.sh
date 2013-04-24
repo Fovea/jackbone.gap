@@ -39,9 +39,7 @@ function cropResize() {
 
     hd_w=$((w * 2))
     if [ $hd_w -gt $src_w ]; then
-        echo
-        echo "[WARNING] Resizing $src from $src_w to $hd_w."
-        echo
+        echo "[WARNING] Resizing $src from $src_w to $hd_w." >> build/logs.txt
     fi
 
     mkdir -p "$dest/img"

@@ -4,7 +4,23 @@
 cd "$PROJECT_PATH"
 
 function usage() {
-    echo "usage: jackbone build <web|ios-sim|ios-dev|android> <debug|release|testing|www>"
+    echo -e "usage: jackbone build ${T_GREEN}<target> <configuration>${T_RESET}"
+    echo
+    echo -e "Valid ${T_GREEN}targets${T_RESET} are:"
+    echo -e " - ${T_BOLD}web${T_RESET}                  Web browsers"
+    echo -e " - ${T_BOLD}ios-sim${T_RESET}              iOS simulator"
+    echo -e " - ${T_BOLD}ios-dev${T_RESET}              iOS device"
+    echo -e " - ${T_BOLD}android${T_RESET}              Any android"
+    echo -e " - ${T_BOLD}blackberry-10${T_RESET}        BlackBerry 10"
+    echo -e " - ${T_BOLD}blackberry-playbook${T_RESET}  BlackBerry Playbook"
+    echo -e " - ${T_BOLD}blackberry-qnx${T_RESET}       BlackBerry QNX"
+    echo
+    echo -e "Valid ${T_GREEN}configurations${T_RESET} are:"
+    echo -e " - ${T_BOLD}debug${T_RESET}    Unoptimized development build"
+    echo -e " - ${T_BOLD}release${T_RESET}  Optimized release build"
+    echo -e " - ${T_BOLD}testing${T_RESET}  Automated tests"
+    echo -e " - ${T_BOLD}www${T_RESET}      Re-build www folder only"
+    echo
     exit 1
 }
 
@@ -18,17 +34,26 @@ fi
 if [ "x$3" != "x" ]; then
     target="$2"
     conf="$3"
+elif [ "x$2" != "x" ]; then
+    usage
 fi
 
 if [ "x$target" = "xweb" ]; then
     BUILD_IOS=NO
     BUILD_ANDROID=NO
+    BUILD_BLACKBERRY=NO
 elif [ "x$target" = "xios-sim" ] || [ "x$target" = "xios-dev" ]; then
     BUILD_IOS=YES
     BUILD_ANDROID=NO
+    BUILD_BLACKBERRY=NO
 elif [ "x$target" = "xandroid" ]; then
     BUILD_IOS=NO
     BUILD_ANDROID=YES
+    BUILD_BLACKBERRY=NO
+elif [ "x$target" = "xblackberry-10" ] || [ "x$target" = "xblackberry-qnx" ] || [ "x$target" = "xblackberry-playbook" ]; then
+    BUILD_IOS=NO
+    BUILD_ANDROID=NO
+    BUILD_BLACKBERRY=YES
 else
     usage
 fi
@@ -45,7 +70,7 @@ else
     usage
 fi
 
-echo -e "Building for target \033[32m$target\033[0m, \033[32m$conf\033[0m configuration."
+echo -e "Building for target $T_GREEN$target$T_RESET, $T_GREEN$conf$T_RESET configuration."
 echo "---------------------------------------------------"
 
 # Store information about currently built configuration.
@@ -63,7 +88,9 @@ mkdir -p build/www/css
 TMPJS=build/tmp-js
 TMPCSS=build/tmp-css
 
-echo "[BUILD] build/www"
+echo -e "${T_BOLD}[BUILD] build/www${T_RESET}"
+
+echo "Build date: `date`" > build/logs.txt
 
 # Copy all our javascript to a temporary folder
 rsync -a app/js/ build/tmp-js || error "Couldn't copy javascript"
@@ -77,7 +104,7 @@ app/js/libs/handlebars/bin/handlebars app/html/*.html -f build/tmp/templates.js 
 sed -e '/TEMPLATES/r build/tmp/templates.js' "$JACKBONEGAP_PATH/js/templates.js.in" > "$TMPJS/templates.js"
 
 # Install platform specific libraries
-if [ x$BUILD_IOS = xYES ]; then
+if [ "x$BUILD_IOS" = xYES ]; then
     cp .downloads/TestFlightPlugin/www/testflight.js "$TMPJS/libs/testflight.js"
     cp .downloads/PhoneGap-SQLitePlugin-iOS/iOS/www/SQLitePlugin.js "$TMPJS/libs/sqlite.js"
 else
@@ -88,11 +115,8 @@ else
 fi
 
 # Copy version number to Javascript
-VERSION="`$JACKBONEGAP_PATH/jackbone version print`"
-sed -e "s/__VERSION__/$VERSION/" "$JACKBONEGAP_PATH/js/version.js.in" \
-    | sed "s/__BUILD__/`date`/" \
-    | sed "s/__RELEASE__/$BUILD_RELEASE/" \
-     > "$TMPJS/version.js"
+VERSION="`cat VERSION`"
+sed -e "s/__VERSION__/$VERSION/" "$JACKBONEGAP_PATH/js/version.js.in" | sed "s/__BUILD__/`date`/" | sed "s/__RELEASE__/$BUILD_RELEASE/" > "$TMPJS/version.js" || error "Failed to generate version.js"
 
 # Copy Jackbone.gap JS files to Application
 cp "$JACKBONEGAP_PATH/js/"*.js "$TMPJS/"
@@ -192,3 +216,10 @@ if [ "x$BUILD_ANDROID" = "xYES" ]; then
     . "$JACKBONEGAP_PATH/android/build.sh" || exit 1
 fi
 
+# Compile Android Application
+if [ "x$BUILD_BLACKBERRY" = "xYES" ]; then
+    . "$JACKBONEGAP_PATH/blackberry/build.sh" || exit 1
+fi
+
+echo -e "${T_BOLD}[DONE]$T_RESET"
+echo -e "run $PROJECT_NAME with \"${T_BOLD}jackbone run${T_RESET}\""
