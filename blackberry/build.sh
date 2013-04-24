@@ -32,10 +32,10 @@ if [ x$BUILD_BLACKBERRY = xYES ]; then
     # Prepare BlackBerry project
     test -e "$BLACKBERRY_PROJECT_PATH" || ./libs/phonegap/lib/blackberry/bin/create "$BLACKBERRY_PROJECT_PATH" $BLACKBERRY_BUNDLE_ID "$PROJECT_NAME" || error "BlackBerry project creation failed"
 
-    # Synchronize www XXX
+    # Synchronize www
     rsync -a "$PROJECT_PATH/build/www/" "$WWW" || error "BlackBerry build failed"
 
-    # Remove version number from cordova.js XXX
+    # Remove version number from cordova.js
     . "$JACKBONEGAP_PATH/package.sh" # PHONEGAP_VERSION is stored here.
     if test -e "$WWW/cordova-$PHONEGAP_VERSION.js"; then
         mv "$WWW/cordova-$PHONEGAP_VERSION.js" "$WWW/js/cordova.js"
@@ -43,8 +43,12 @@ if [ x$BUILD_BLACKBERRY = xYES ]; then
 
     if test ! -e "$PROJECT_PATH/blackberry/project.properties"; then
         mkdir -p "$PROJECT_PATH/blackberry"
-        cp "$BLACKBERRY_PROJECT_PATH/project.properties" "$PROJECT_PATH/project.properties"
-        error "Edit the blackberry/project.properties to configure BlackBerry SDK."
+        if test -e "$HOME/.jackbone/blackberry/project.properties"; then
+            cp "$HOME/.jackbone/blackberry/project.properties" "$PROJECT_PATH/blackberry/project.properties"
+        else
+            cp "$BLACKBERRY_PROJECT_PATH/project.properties" "$PROJECT_PATH/blackberry/project.properties"
+            error "Edit the blackberry/project.properties to configure BlackBerry SDK."
+        fi
     fi
     cp "$PROJECT_PATH/blackberry/project.properties" "$BLACKBERRY_PROJECT_PATH/project.properties"
 
