@@ -41,6 +41,9 @@ If file named `ios/Info.plist` is found in your project directory, it will be us
 ##BlackBerry
   * Follow [Cordova's Guide] (http://docs.phonegap.com/en/2.6.0/guide_getting-started_blackberry_index.md.html) to install the BlackBerrySDK.
 
+###Automated tests
+  * Project generated during unit tests will use `~/.jackbone/blackberry/project.properties` as a config (all boilerplate-d projects actually).
+
 ##License
 
 Jackbone.gap is distributed under the MIT License.

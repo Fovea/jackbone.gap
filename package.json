@@ -13,6 +13,7 @@
         "less":          "latest",
         "jackbone":      "latest",
         "plugman":       "latest",
+        "jshint":        "latest",
         "kassics":       ">=0.0.5"
     }
 }

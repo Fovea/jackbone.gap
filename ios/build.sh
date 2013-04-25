@@ -18,11 +18,11 @@ if [ "x$BUILD_IOS" = "xYES" ]; then
     mkdir -p "$IOS_PROJECT_PATH"
 
     # Create PhoneGap iOS Project
-    echo -n c
+    echo -n i
     "$LIBS_PATH/phonegap/lib/ios/bin/create" --shared "$IOS_PROJECT_PATH" "$IOS_BUNDLE_ID" "$PROJECT_NAME"
 
     # Patch the project.
-    echo -n p
+    echo -n O
     patch -l -p0 << EOF > /dev/null || error "Patch failed"
 --- $IOS_PROJECT_PATH/$PROJECT_NAME.xcodeproj/project.pbxproj	2013-03-23 09:24:16.000000000 +0200
 +++ $IOS_PROJECT_PATH/$PROJECT_NAME.xcodeproj/project.pbxproj	2013-03-23 11:28:31.000000000 +0200
@@ -44,7 +44,7 @@ if [ "x$BUILD_IOS" = "xYES" ]; then
             SKIP_INSTALL = NO;
             USER_HEADER_SEARCH_PATHS = "";
 EOF
-    echo -n c
+    echo -n S
     if test -e "$PROJECT_PATH/ios/Info.plist"; then
         cp "$PROJECT_PATH/ios/Info.plist" "$IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist"
     fi
@@ -53,7 +53,7 @@ EOF
     cp "$JACKBONEGAP_PATH/ios/build-dev" "$IOS_PROJECT_PATH/cordova/build-dev"
 
     # Generate icons and splash screens.
-    echo -n g
+    echo -n .
     . "$JACKBONEGAP_PATH/ios/generate-assets.sh"
 
     # Remove useless assets.
@@ -104,7 +104,7 @@ EOF
     fi
     rm "$EFILE"
 
-    echo
+    echo ok
 else
     echo "This script should be launched by root dir's build script."
     exit 1

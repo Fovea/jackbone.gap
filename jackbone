@@ -34,6 +34,7 @@ function usage {
     echo -e "- ${T_BOLD}clean${T_RESET}        Delete generated files."
     echo -e "- ${T_BOLD}upload${T_RESET}       TODO."
     echo -e "- ${T_BOLD}version${T_RESET}      Manage your version number."
+    echo -e "- ${T_BOLD}check${T_RESET}        Check your files for errors."
     echo -e "- ${T_BOLD}help${T_RESET}         Show this help message."
     echo
     echo "Type '$0 <command> help' for more help on a specific command"
@@ -63,6 +64,10 @@ if [ "x$command" != xboilerplate ]; then
     if [ "x$PROJECT_NAME" = "x" ]; then
         error "config file should specify a project name."
     fi
+fi
+
+if [ "x$command" = "xbuild" ]; then
+    . "scripts/check.sh" || exit 1
 fi
 
 . "$script" $@ || exit 1
