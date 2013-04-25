@@ -35,7 +35,10 @@ if test -e /Developer/Applications/Xcode.app; then
     "$JB" run
 fi
 
+# BlackBerry SDK found, assume we can test that to.
 if test -e "/Developer/SDKs/Research In Motion/BlackBerry WebWorks SDK for TabletOS 2.2.0.5/bbwp"; then
+    # Clean BlackBerry build
+    rm -fr build/blackberry
     "$JB" build blackberry-playbook testing
     "$JB" run
 fi
