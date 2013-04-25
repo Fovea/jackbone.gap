@@ -1,4 +1,4 @@
-if [ "x$TERM" = "xxterm" ] && which tput > /dev/null; then
+if [ "x$TERM" = "xxterm" ] && [ "x$JENKINS_HOME" = "x" ] && which tput > /dev/null; then
     T_UNDER=`tput sgr 0 1`   # Underline
     T_BOLD=`tput bold`     # Bold
     T_RED=`tput setaf 1`   # red

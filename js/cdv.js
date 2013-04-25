@@ -5,7 +5,7 @@ define([
   'jquery',
   'underscore',
   'logger',
-  'testflight',
+  'testflight'
 ], function ($,_,Logger) {
     /**
      * Sets Cordova initial configuration, checks for supported features, loads plugins.

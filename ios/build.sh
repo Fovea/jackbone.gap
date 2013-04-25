@@ -49,7 +49,7 @@ EOF
         cp "$PROJECT_PATH/ios/Info.plist" "$IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist"
     fi
     cp "$JACKBONEGAP_PATH/ios/config.xml" "$IOS_PROJECT_PATH/$PROJECT_NAME/config.xml"
-    cp "$JACKBONEGAP_PATH/ios/archive" "$IOS_PROJECT_PATH/cordova/archive"
+    cp "$JACKBONEGAP_PATH/ios/release-dev" "$IOS_PROJECT_PATH/cordova/release-dev"
     cp "$JACKBONEGAP_PATH/ios/build-dev" "$IOS_PROJECT_PATH/cordova/build-dev"
 
     # Generate icons and splash screens.
@@ -98,9 +98,9 @@ EOF
     fi
     # Build
     if [ "x$BUILD_RELEASE" = "xYES" ]; then
-        "$IOS_PROJECT_PATH/cordova/release$devext" | tee "$EFILE" | awk '{ printf "."; fflush }' || error "iOS build failed"
+        "$IOS_PROJECT_PATH/cordova/release$devext" | tee "$EFILE" | awk '{ if ((i = (i+1) % 16) == 0) { printf "."; fflush; } }' || error "iOS build failed"
     else
-        "$IOS_PROJECT_PATH/cordova/build$devext"  | tee "$EFILE" | awk '{ printf "."; fflush }' || error "iOS build failed"
+        "$IOS_PROJECT_PATH/cordova/build$devext"  | tee "$EFILE" | awk '{ if ((i = (i+1) % 16) == 0) { printf "."; fflush; } }' || error "iOS build failed"
     fi
     rm "$EFILE"
 

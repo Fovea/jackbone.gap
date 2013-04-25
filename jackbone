@@ -12,14 +12,17 @@ export JACKBONEGAP_PATH="`pwd`"
 
 . tools/functions.sh
 
-echo -ne "$T_GREEN"
-echo -e "      _            _    _                      "
-echo -e "     | |          | |  | |                     "
-echo -e "     | | __ _  ___| | _| |__   ___  _ __   ___ "
-echo -e " _   | |/ _' |/ __| |/ / '_ \ / _ \| '_ \ / _ \\"
-echo -e "| |__| | (_| | (__|   <| |_) | (_) | | | |  __/"
-echo -e " \____/ \__,_|\___|_|\_\_.__/ \___/|_| |_|\___|"
-echo -e "$T_RESET"
+if [ "x$FROM_JACKBONE" = "x" ]; then
+    export FROM_JACKBONE=YES
+    echo -ne "$T_GREEN"
+    echo -e "      _            _    _                      "
+    echo -e "     | |          | |  | |                     "
+    echo -e "     | | __ _  ___| | _| |__   ___  _ __   ___ "
+    echo -e " _   | |/ _' |/ __| |/ / '_ \ / _ \| '_ \ / _ \\"
+    echo -e "| |__| | (_| | (__|   <| |_) | (_) | | | |  __/"
+    echo -e " \____/ \__,_|\___|_|\_\_.__/ \___/|_| |_|\___|"
+    echo -e "$T_RESET"
+fi
                             
 function usage {
     echo "usage: $0 <command>"
@@ -30,12 +33,12 @@ function usage {
     echo -e "- ${T_BOLD}update${T_RESET}       Update dependencies."
     echo -e "- ${T_BOLD}build${T_RESET}        Compile your project."
     echo -e "- ${T_BOLD}run${T_RESET}          Execute your app."
-    echo -e "- ${T_BOLD}archive${T_RESET}      TODO."
+    echo -e "- ${T_BOLD}archive${T_RESET}      Create release archives."
     echo -e "- ${T_BOLD}clean${T_RESET}        Delete generated files."
-    echo -e "- ${T_BOLD}upload${T_RESET}       TODO."
-    echo -e "- ${T_BOLD}version${T_RESET}      Manage your version number."
-    echo -e "- ${T_BOLD}check${T_RESET}        Check your files for errors."
+    echo -e "- ${T_BOLD}version${T_RESET}      Manage version number."
+    echo -e "- ${T_BOLD}check${T_RESET}        Check your source files."
     echo -e "- ${T_BOLD}help${T_RESET}         Show this help message."
+    echo -e "- ${T_BOLD}upload${T_RESET}       TODO."
     echo
     echo "Type '$0 <command> help' for more help on a specific command"
     echo

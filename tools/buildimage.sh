@@ -17,7 +17,7 @@ function readImageSIZE() {
     if which md5 > /dev/null; then
         f_cache=`md5 -q -s "$f"`
     else
-        f_cache=`echo $f | md5sum cut -d\  -f1`
+        f_cache=`echo $f | md5sum | cut -d\  -f1`
     fi
     cache_file="build/tmp/cache/$f_cache"
     if test "$f" -nt "$cache_file"; then

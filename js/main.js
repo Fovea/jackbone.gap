@@ -50,7 +50,7 @@ requirejs.config({
         },
         stacktrace: {
             exports: 'printStackTrace'
-        },
+        }
     }
 });
 

@@ -20,10 +20,12 @@
 #
 
 #
-# Compile a Cordova/iOS project for devices in debug mode.
+# Compile a Cordova/iOS project for devices in release mode.
+# Create an IPA Archive
 #
 
 set -e
+source config
 
 XCODE_VER=$(xcodebuild -version | head -n 1 | sed -e 's/Xcode //')
 XCODE_MIN_VERSION="4.5"
@@ -32,6 +34,8 @@ if [[ "$XCODE_VER" < "$XCODE_MIN_VERSION" ]]; then
 	echo "Cordova can only run in Xcode version $XCODE_MIN_VERSION or greater."
 	exit 1
 fi
+
+PROVISIONING_PROFILE="`pwd`/ios/$PROVISIONING_PROFILE"
 
 CORDOVA_PATH=$( cd "$( dirname "$0" )" && pwd -P)
 PROJECT_PATH="$(dirname "$CORDOVA_PATH")"
@@ -42,9 +46,14 @@ cd "$PROJECT_PATH"
 
 SDK=`xcodebuild -showsdks | grep iphoneos | tail -1 | awk '{print $4}'`
 
-xcodebuild -project $PROJECT_NAME.xcodeproj -target $PROJECT_NAME -configuration Debug -sdk $SDK clean build CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build"
+xcodebuild -project $PROJECT_NAME.xcodeproj -target $PROJECT_NAME -configuration Release -sdk $SDK clean build CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build"
 
+# Check if build succeeded
+if [ $? != 0 ]
+then
+    echo "failed."
+    exit 1
+fi
 
-
-
+/usr/bin/xcrun -sdk "$SDK" PackageApplication -v "$PROJECT_PATH/build/$PROJECT_NAME.app" -o "$PROJECT_PATH/build/$PROJECT_NAME.ipa" --sign "${DEVELOPER_NAME}" --embed "${PROVISIONING_PROFILE}"
 

@@ -41,7 +41,7 @@ define(['jquery', 'underscore', 'stacktrace', 'events'], function($,_,Stacktrace
 
     Logger.setVmStats = function(vmstats) {
         this.vmStats = vmstats;
-    }
+    };
 
     /** Renders the logs into the DOM element.
      * @param maxL */
@@ -77,7 +77,7 @@ define(['jquery', 'underscore', 'stacktrace', 'events'], function($,_,Stacktrace
         if (this.vmStats)
             docStats = '[VIEW:'+ this.vmStats.numViews +'] [CTRL:'+ this.vmStats.numControllers +'] ' + docStats;
         Logger.$statsEl.append('<div>Document '+docStats+'</div>');
-    }
+    };
 
     /** Renders the logs into the DOM element.
      * @param maxL */
@@ -120,8 +120,8 @@ define(['jquery', 'underscore', 'stacktrace', 'events'], function($,_,Stacktrace
         // Display.
         if (!lreverse) {
             Logger.$el.html('');
-            for (var i=lines.length; i-->0;)
-                Logger.$el.append(lines[i]);
+            for (var j=lines.length; j-->0;)
+                Logger.$el.append(lines[j]);
         }
         else {
             Logger.$el.html(lines.join(''));
