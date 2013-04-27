@@ -64,11 +64,11 @@ EOF
     cd "$PROJECT_PATH/build"
     echo -n .
     # INSTALL CDV TestFlight"
-    "$JS_LIBS_PATH/plugman/plugman.js" --platform ios --project "$IOS_PROJECT_PATH" --plugin "$PROJECT_PATH/.downloads/TestflightPlugin" > "$EFILE" || error "Failed to install Testflight Plugin"
+    node "$JS_LIBS_PATH/plugman/plugman.js" --platform ios --project "$IOS_PROJECT_PATH" --plugin "$PROJECT_PATH/.downloads/TestflightPlugin" > "$EFILE" || error "Failed to install Testflight Plugin"
 
     echo -n .
     # INSTALL CDV SQLite"
-    "$JS_LIBS_PATH/plugman/plugman.js" --platform ios --project "$IOS_PROJECT_PATH" --plugin "$PROJECT_PATH/.downloads/PhoneGap-SQLitePlugin-iOS/iOS" > "$EFILE" || error "Failed to install SQLite Plugin"
+    node "$JS_LIBS_PATH/plugman/plugman.js" --platform ios --project "$IOS_PROJECT_PATH" --plugin "$PROJECT_PATH/.downloads/PhoneGap-SQLitePlugin-iOS/iOS" > "$EFILE" || error "Failed to install SQLite Plugin"
     rm "$EFILE"
     cd "$PROJECT_PATH"
 

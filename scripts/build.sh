@@ -13,7 +13,6 @@ function usage() {
     echo -e " - ${T_BOLD}android${T_RESET}              Any android"
     echo -e " - ${T_BOLD}blackberry-10${T_RESET}        BlackBerry 10"
     echo -e " - ${T_BOLD}blackberry-playbook${T_RESET}  BlackBerry Playbook"
-    echo -e " - ${T_BOLD}blackberry-qnx${T_RESET}       BlackBerry QNX"
     echo
     echo -e "Valid ${T_GREEN}configurations${T_RESET} are:"
     echo -e " - ${T_BOLD}debug${T_RESET}    Unoptimized development build"
@@ -50,7 +49,7 @@ elif [ "x$target" = "xandroid" ]; then
     BUILD_IOS=NO
     BUILD_ANDROID=YES
     BUILD_BLACKBERRY=NO
-elif [ "x$target" = "xblackberry-10" ] || [ "x$target" = "xblackberry-qnx" ] || [ "x$target" = "xblackberry-playbook" ]; then
+elif [ "x$target" = "xblackberry-10" ] || [ "x$target" = "xblackberry" ] || [ "x$target" = "xblackberry-playbook" ]; then
     BUILD_IOS=NO
     BUILD_ANDROID=NO
     BUILD_BLACKBERRY=YES

@@ -5,9 +5,9 @@ if [ x$BUILD_BLACKBERRY = xYES ]; then
     echo -e "${T_BOLD}[BUILD] build/blackberry${T_RESET}"
 
     if [ "x$target" = "xblackberry-10" ]; then
-        platform="blackberry"
-    elif [ "x$target" = "xblackberry-qnx" ]; then
         platform="qnx"
+    elif [ "x$target" = "xblackberry" ]; then
+        platform="blackberry"
     elif [ "x$target" = "xblackberry-playbook" ]; then
         platform="playbook"
     fi
@@ -57,6 +57,11 @@ if [ x$BUILD_BLACKBERRY = xYES ]; then
     else
         sed -e "s|__PROJECT_NAME__|$PROJECT_NAME|" "$JACKBONEGAP_PATH/blackberry/config.xml" > "$WWW/config.xml"
     fi
+
+    # Apply version number to config file
+    VERSION=`cat $PROJECT_PATH/VERSION`
+    BUILDNUM=`cat $BLACKBERRY_PROJECT_PATH/buildId.txt|grep number|cut -d= -f2`
+    sed -i .bak "-e/\"[0-9].[0-9].[0-9].[0.9]\"/{;s/\"[0-9].[0-9].[0-9].[0.9]\"/\"$VERSION.$BUILDNUM.0\"/;:a" '-en;ba' '-e}' "$WWW/config.xml"
 
     # XXX
     # Custom playbook.xml file fixes bug in phonegap generated playbook.xml file.

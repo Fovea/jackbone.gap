@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ "x$target" = "xblackberry-10" ] || [ "x$target" = "xblackberry-qnx" ] || [ "x$target" = "xblackberry-playbook" ]; then
+if [ "x$target" = "xblackberry-10" ] || [ "x$target" = "xblackberry" ] || [ "x$target" = "xblackberry-playbook" ]; then
     set -e
     echo -e "Running for ${T_BOLD}BlackBerry.${T_RESET}"
 
@@ -17,6 +17,12 @@ if [ "x$target" = "xblackberry-10" ] || [ "x$target" = "xblackberry-qnx" ] || [ 
     fi
 
     cd "$BLACKBERRY_PROJECT_PATH"
+
+    # Apply version number to config file
+    VERSION=`cat $PROJECT_PATH/VERSION`
+    BUILDNUM=`cat $BLACKBERRY_PROJECT_PATH/buildId.txt|grep number|cut -d= -f2`
+    sed -i .bak "-e/\"[0-9].[0-9].[0-9].[0.9]\"/{;s/\"[0-9].[0-9].[0-9].[0.9]\"/\"$VERSION.$BUILDNUM.1\"/;:a" '-en;ba' '-e}' "www/config.xml"
+
     ant $platform $ant_target
 fi
 
