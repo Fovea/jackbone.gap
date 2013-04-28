@@ -28,9 +28,9 @@
 
   <name>__PROJECT_NAME__</name>
 
-  <author></author>
+  <author>__PROJECT_AUTHOR__</author>
 
-  <description></description>
+  <description>__PROJECT_DESCRIPTION__</description>
     
   <license href="http://opensource.org/licenses/alphabetical"></license>
 

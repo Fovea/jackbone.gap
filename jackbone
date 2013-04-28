@@ -14,6 +14,7 @@ export JACKBONEGAP_PATH="`pwd`"
 
 if [ "x$FROM_JACKBONE" = "x" ]; then
     export FROM_JACKBONE=YES
+    ROOT_JACKBONE=YES
     echo -ne "$T_GREEN"
     echo -e "      _            _    _                      "
     echo -e "     | |          | |  | |                     "
@@ -25,8 +26,9 @@ if [ "x$FROM_JACKBONE" = "x" ]; then
 fi
                             
 function usage {
-    echo "usage: $0 <command>"
-    echo "commands:"
+    echo "usage: ${T_BOLD}jackbone <command>${T_RESET}"
+    echo
+    echo "Valid commands are:"
     echo
     echo -e "- ${T_BOLD}boilerplate${T_RESET}  Create a new project."
     echo -e "- ${T_BOLD}init${T_RESET}         Download dependencies."
@@ -40,7 +42,7 @@ function usage {
     echo -e "- ${T_BOLD}help${T_RESET}         Show this help message."
     echo -e "- ${T_BOLD}upload${T_RESET}       TODO."
     echo
-    echo "Type '$0 <command> help' for more help on a specific command"
+    echo -e "Type '${T_BOLD}jackbone <command> --help${T_RESET}' for more help on a specific command"
     echo
     exit 1
 }
@@ -69,7 +71,7 @@ if [ "x$command" != xboilerplate ]; then
     fi
 fi
 
-if [ "x$command" = "xbuild" ]; then
+if [ "x$command" = "xbuild" ] && [ "x$2" != "x--help" ]; then
     . "scripts/check.sh" || exit 1
 fi
 

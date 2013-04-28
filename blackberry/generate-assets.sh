@@ -9,7 +9,8 @@ function cropResize() {
     h=$4
     extra=$5
     size="${w}x${h}"
-    echo "Resize $src -> $dest $size    $extra"
+    # echo "Resize $src -> $dest $size    $extra"
+    echo -n .
     convert $src -resize $size^ -gravity Center -crop $size+0+0 +repage $extra $dest
 }
 

@@ -19,7 +19,8 @@ fi
 APK="$PROJECT_PATH/archives/$PROJECT_NAME-$VERSION-Android.apk"
 IPA="$PROJECT_PATH/archives/$PROJECT_NAME-$VERSION-iOS.ipa"
 DSYM="$PROJECT_PATH/archives/$PROJECT_NAME-$VERSION-iOS.app.dSYM.zip"
-BAR_PLAYBOOK="$PROJECT_NAME/archives/$PROJECT_NAME-$VERSION-PlayBook.bar"
+BAR_PLAYBOOK="$PROJECT_NAME/archives/$PROJECT_NAME-$VERSION-BlackBerry-PlayBook.bar"
+BAR_10="$PROJECT_NAME/archives/$PROJECT_NAME-$VERSION-BlackBerry-10.bar"
 WEB="$PROJECT_PATH/archives/$PROJECT_NAME-$VERSION-Web"
 
 # Build for Web
@@ -58,6 +59,11 @@ if [ "x$BUILD_BLACKBERRY" = "xYES" ]; then
         "$JACKBONEGAP_PATH/jackbone" build blackberry-playbook release || exit 1
         cp "$BLACKBERRY_PROJECT_PATH/build/$PROJECT_NAME.bar" "$BAR_PLAYBOOK"
     fi
+    if [ "x$BUILD_BLACKBERRY_10" = "xYES" ]; then
+        "$JACKBONEGAP_PATH/jackbone" clean build         || exit 1
+        "$JACKBONEGAP_PATH/jackbone" build blackberry-10 release || exit 1
+        cp "$BLACKBERRY_PROJECT_PATH/build/$PROJECT_NAME.bar" "$BAR_10"
+    fi
 fi
 
 # Statistics
@@ -72,6 +78,7 @@ if [ "x$BUILD_ANDROID" = "xYES" ]; then
 fi
 if [ "x$BUILD_BLACKBERRY" = "xYES" ]; then
     test -e "$BAR_PLAYBOOK" && echo -e "${T_BOLD} BAR${T_RESET}: `du -hs $BAR_PLAYBOOK`"
+    test -e "$BAR_10" && echo -e "${T_BOLD} BAR${T_RESET}: `du -hs $BAR_10`"
 fi
 echo -e "${T_BOLD} Web${T_RESET}: `du -hs $WEB`"
 echo

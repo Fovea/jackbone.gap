@@ -29,7 +29,7 @@ elif [ "x$what" = "xmore" ]; then
 elif [ "x$what" = "xbuild" ]; then
     clean_build
 else
-    echo -e "usage: ${T_BOLD}jackbone clean <build|more|all>${T_RESET}"
+    echo -e "usage: ${T_BOLD}jackbone clean${T_RESET} <${T_BOLD}build${T_RESET}|${T_BOLD}more${T_RESET}|${T_BOLD}all${T_RESET}>"
     echo
     echo -e "        ${T_BOLD}build${T_RESET}: only delete build files"
     echo -e "         ${T_BOLD}more${T_RESET}: delete build files and temporary files"

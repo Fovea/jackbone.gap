@@ -2,31 +2,39 @@
 # Jackbon.Gap configuration
 #
 PROJECT_NAME="MyProject"
+PROJECT_AUTHOR="Fovea"
+PROJECT_DESCRIPTION="My Jackbone Project"
 
-# Images to build
+# List of images to build.
+# Will be looked at in `assets/` and `app/img/` folders.
 BUILD_IMAGES=""
 
 # IOS
 # -----
 
-# Should iOS archive been built?
+# Enter "YES" if iOS archive should be built.
+# Then fill the other iOS related fields.
 BUILD_IOS="NO"
 
 # ID of the iOS bundle (should match provisioning profile).
 IOS_BUNDLE_ID="cc.fovea.myproject"
 
 # Provisioning profile to use by the archive command.
-# (should be in ios/ folder)
+# (This file should be in ios/ folder)
 PROVISIONING_PROFILE="AdHoc.mobileprovision"
-# ID corresponding to this provisioning profile.
+
+# ID of the provisioning profile.
+# (Something like 12345678-9ABC-DEF0-1234-56789ABCDEF0)
 PROVISIONING_PROFILE_ID=""
+
 # Developer signing identity to use.
 DEVELOPER_NAME="iPhone Distribution: Fovea"
 
 # ANDROID
 # -------
 
-# Should Android archive been built?
+# Enter "YES" if Android archive should be built.
+# Then fill other Android related fields.
 BUILD_ANDROID="NO"
 
 # ID of the Android bundle
@@ -35,14 +43,14 @@ ANDROID_BUNDLE_ID="cc.fovea.myproject"
 # BLACKBERRY
 # ----------
 
-# Should Blackberry archive been built?
+# Enter "YES" if BlackBerry archives should be built.
 BUILD_BLACKBERRY="NO"
+
+# YES if PlayBook SDK is available
+BUILD_BLACKBERRY_PLAYBOOK="YES"
+
+# YES if BlackBerry 10 SDK is available
+BUILD_BLACKBERRY_10="YES"
 
 # ID of the Blackberry bundle
 BLACKBERRY_BUNDLE_ID="cc.fovea.myproject"
-
-# Path of the SDKs BBWP and Simulator tools.
-BLACKBERRY_BBWP_DIR=""
-PLAYBOOK_BBWP_DIR="/Developer/SDKs/Research In Motion/BlackBerry WebWorks SDK for TabletOS 2.2.0.5/bbwp"
-QNX_BBWP_DIR=""
-BLACKBERRY_SIM_DIR=""

@@ -228,4 +228,6 @@ if [ "x$BUILD_BLACKBERRY" = "xYES" ]; then
 fi
 
 echo -e "${T_BOLD}[DONE]$T_RESET"
+echo
 echo -e "run $PROJECT_NAME with \"${T_BOLD}jackbone run${T_RESET}\""
+echo

@@ -84,3 +84,8 @@ if test ! -e "$LIBS_PATH/xmlstarlet/xml"; then
 fi
 
 echo "--- DONE"
+
+echo
+echo -e "You can now build and test ${PROJECT_NAME} with ${T_BOLD}jackbone build${T_RESET}"
+echo
+
