@@ -1,9 +1,9 @@
 # PhoneGap
-PHONEGAP_VERSION="2.5.0"
+PHONEGAP_VERSION="2.7.0rc1"
 PHONEGAP_URL="https://github.com/phonegap/phonegap/archive/$PHONEGAP_VERSION.zip"
 
 # JQuery Mobile
-JQUERYMOBILE_VERSION="1.3.0-rc.1"
+JQUERYMOBILE_VERSION="1.3.1"
 JQUERYMOBILE_URL="http://code.jquery.com/mobile/$JQUERYMOBILE_VERSION/jquery.mobile-$JQUERYMOBILE_VERSION.zip"
 
 # JQuery

@@ -49,7 +49,13 @@ function httpPackageZIP {
         mkdir -p "$DOWNLOADS_PATH/tmp"
         unzip "$DOWNLOADS_PATH/$file" -d "$DOWNLOADS_PATH/tmp/" > /dev/null || error "failed to unzip $file"
         rm -fr "$outdir"
-        mv "$DOWNLOADS_PATH"/tmp/* "$outdir"
+        if [ `ls -1 "$DOWNLOADS_PATH/tmp/" | wc -l` = "1" ]; then
+            # If zip contains only one folder, move this outdir
+            mv "$DOWNLOADS_PATH"/tmp/* "$outdir"
+        else
+            # If zip contains many files, move tmp to outdir
+            mv "$DOWNLOADS_PATH/tmp" "$outdir"
+        fi
     fi
 }
 
