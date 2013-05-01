@@ -10,7 +10,7 @@ target=`cat "$PROJECT_PATH/build/config" | cut -d\  -f1`
 conf=`cat "$PROJECT_PATH/build/config" | cut -d\  -f2`
 
 if [ "x$target" = "xweb" ] && [ "x$conf" = "xtesting" ]; then
-    phantomjs tools/phantom-qunit-runner.js "$PROJECT_PATH/build/www/index.html"
+    phantomjs --web-security=false --local-storage-path="$PROJECT_PATH/build/teststor" --local-storage-quota=999999999 tools/phantom-qunit-runner.js "$PROJECT_PATH/build/www/index.html"
 elif [ "x$target" = "xweb" ]; then
     echo
     echo Just open file://$PROJECT_PATH/build/www/index.html
