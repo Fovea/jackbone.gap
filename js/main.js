@@ -86,14 +86,7 @@ function ($, _, Backbone, Jackbone, Cordova, Testing, Logger, AppDelegate) {
         }
     };
 
-    function onDeviceReady() {
-
-        var testingEnabled = window.TESTING || false;
-
-        // Initialize some plugins.
-        Logger.initialize();
-        Cordova.initialize();
-
+    function addDeviceClass() {
         // Allow CSS rules to be platform dependent
         if (Cordova.isIos) {
             $('body').addClass('ios');
@@ -101,6 +94,16 @@ function ($, _, Backbone, Jackbone, Cordova, Testing, Logger, AppDelegate) {
         if (Cordova.isAndroid) {
             $('body').addClass('android');
         }
+    }
+
+    function onDeviceReady() {
+
+        var testingEnabled = window.TESTING || false;
+
+        // Initialize some plugins.
+        Logger.initialize();
+        Cordova.initialize();
+        addDeviceClass();
 
         // Catch pause and resume events.
         document.addEventListener('resume', onResume, false);

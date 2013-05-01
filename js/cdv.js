@@ -6,8 +6,7 @@ define([
     'underscore',
     'logger',
     'testflight'
-], function ($,_,Logger) {
-
+], function ($, _, Logger) {
     'use strict';
 
     /**
