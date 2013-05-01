@@ -1,5 +1,5 @@
 lint: check-jshint
-	@jshint --camelcase --indent=4 js/*.js
+	@jshint js/*.js
 
 tests: check-phantomjs
 	@./tests/boilerplate-lite.sh

@@ -26,15 +26,15 @@ requirejs.config({
             exports: '_'
         },
         backbone: {
-            deps: ["underscore", "jquery"],
-            exports: "Backbone"
+            deps: ['underscore', 'jquery'],
+            exports: 'Backbone'
         },
         jquerymobile: {
-            deps: ["jquery"]
+            deps: ['jquery']
         },
         jackbone: {
-            deps: ["backbone", "jquerymobile"],
-            exports: "Jackbone"
+            deps: ['backbone', 'jquerymobile'],
+            exports: 'Jackbone'
         },
         handlebars: {
             exports: 'Handlebars'
@@ -46,7 +46,7 @@ requirejs.config({
             exports: 'Kassics'
         },
         k6particles: {
-            deps: ["kassics"]
+            deps: ['kassics']
         },
         stacktrace: {
             exports: 'printStackTrace'
@@ -64,35 +64,47 @@ require([
     'logger',
     'appdelegate'
 ],
-function($, _, Backbone, Jackbone, Cordova, Testing, Logger, AppDelegate) {
+function ($, _, Backbone, Jackbone, Cordova, Testing, Logger, AppDelegate) {
+
+    'use strict';
+
+    // When application is resumed, make sure we re-setup the current view
+    // and ask client application to resume execution.
+    var onResume = function () {
+        if (Jackbone.ViewManager.reSetupCurrent) {
+            Jackbone.ViewManager.reSetupCurrent();
+        }
+        if (AppDelegate.resume) {
+            AppDelegate.resume();
+        }
+    };
+
+    // When application is paused, ask client application to stop execution.
+    var onPause = function () {
+        if (AppDelegate.pause) {
+            AppDelegate.pause();
+        }
+    };
 
     function onDeviceReady() {
 
         var testingEnabled = window.TESTING || false;
-        
+
         // Initialize some plugins.
         Logger.initialize();
         Cordova.initialize();
 
-        // When application is resumed, make sure we re-setup the current view
-        // and ask client application to resume execution.
-        var onResume = function () {
-            if (Jackbone.ViewManager.reSetupCurrent) {
-                Jackbone.ViewManager.reSetupCurrent();
-            }
-            if (AppDelegate.resume) {
-                AppDelegate.resume();
-            }
-        };
-        document.addEventListener("resume", onResume, false);
+        // Allow CSS rules to be platform dependent
+        if (Cordova.isIos) {
+            $('body').addClass('ios');
+        }
+        if (Cordova.isAndroid) {
+            $('body').addClass('android');
+        }
 
-        // When application is paused, ask client application to stop execution.
-        var onPause = function () {
-            if (AppDelegate.pause) {
-                AppDelegate.pause();
-            }
-        };
-        document.addEventListener("pause", onPause, false);
+        // Catch pause and resume events.
+        document.addEventListener('resume', onResume, false);
+        document.addEventListener('pause', onPause, false);
 
         // Hide splash screen
         Cordova.hideNativeSplash();
@@ -108,11 +120,13 @@ function($, _, Backbone, Jackbone, Cordova, Testing, Logger, AppDelegate) {
             AppDelegate.test();
         }
     }
-    
+
     // If cordova (PhoneGap) is present, we'll wait for 'deviceready' before doing anything.
-    if (window.cordova)
-        document.addEventListener("deviceready", onDeviceReady, false);
-    else
+    if (window.cordova) {
+        document.addEventListener('deviceready', onDeviceReady, false);
+    }
+    else {
         onDeviceReady();
+    }
 });
 

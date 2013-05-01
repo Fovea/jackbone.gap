@@ -208,7 +208,9 @@ mkdir -p build/www/snd
 if test -x "$PROJECT_PATH/build-sounds.sh"; then
     "$PROJECT_PATH/build-sounds.sh" || error "Custom Build Sounds"
 fi
-rsync --delete -a app/snd/ build/www/snd || error "Couldn't copy sounds"
+if test -e app/snd; then
+    rsync --delete -a app/snd/ build/www/snd || error "Couldn't copy sounds"
+fi
 
 echo
 

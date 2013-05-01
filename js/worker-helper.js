@@ -1,6 +1,8 @@
 // Allow to execute a function as a worker.
 /* jshint evil: true */
-self.onmessage = function(e) {
+/* global self */
+self.onmessage = function (e) {
+    'use strict';
     self.onmessage = null; // Clean-up
     eval(e.data);
 };

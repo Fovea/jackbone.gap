@@ -1,6 +1,9 @@
 define([
     'jackbone'
-], function(Jackbone) {
+], function (Jackbone) {
+
+    'use strict';
+
     /** 
      * @name Testing
      * @class [tests/testing] Tests runner.
@@ -9,8 +12,8 @@ define([
     var Testing = {};
 
     /** Run all the tests (after 1000 ms). */
-    Testing.run = function(fn) {
-        window.setTimeout(function() {
+    Testing.run = function (fn) {
+        window.setTimeout(function () {
             fn();
             // QUnit.load();
         }, 1000);
@@ -24,10 +27,10 @@ define([
     var TestChain = Testing.Chain = {};
 
     /** Useful when generating fake clicks */
-    TestChain.fakeEvent = { preventDefault: function() {} };
+    TestChain.fakeEvent = { preventDefault: function () {} };
 
     /** Initialize the chain. */
-    TestChain.init = function(test) {
+    TestChain.init = function (test) {
         this.totalTime = (this.totalTime || 0) + (this.t || 0) + 1000;
         this.t = 2000;
         this.expected = 0;
@@ -41,31 +44,35 @@ define([
      * @param fn        Function to call
      * @param nexpected Number of QUnit assertions expected (optional)
      */
-    TestChain.add = function(before, after, fn, nexpected) {
+    TestChain.add = function (before, after, fn, nexpected) {
         var test = this.test;
         this.t += before + 100;
-        if (typeof nexpected === "number") {
+        if (typeof nexpected === 'number') {
             this.expected += nexpected;
         }
-        setTimeout(function() {
-            if (!this.failed)
+        setTimeout(function () {
+            if (!this.failed) {
                 fn.call(test);
+            }
         }, this.t);
         this.t += after + 100;
     };
 
     /** Launch execution of the chain.  */
-    TestChain.finish = function() {
+    TestChain.finish = function () {
         QUnit.expect(this.expected);
     };
 
-    TestChain.start = function() {
-        QUnit.done(function( details ) {
-            console.log("QUnit.done:" + details.total + ":" + details.failed + ":" + details.passed + ":" + details.runtime);
+    TestChain.start = function () {
+        QUnit.done(function (details) {
+            console.log('QUnit.done:' + details.total +
+                        ':' + details.failed +
+                        ':' + details.passed +
+                        ':' + details.runtime);
         });
-        setTimeout(function() {
+        setTimeout(function () {
             Jackbone.router.goto('testing');
-            setTimeout(function() {
+            setTimeout(function () {
                 QUnit.start();
             }, 500);
         }, this.totalTime + this.t + 100);

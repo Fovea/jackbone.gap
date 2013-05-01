@@ -2,11 +2,14 @@
  * @fileoverview Cordova Wrapper.
  */
 define([
-  'jquery',
-  'underscore',
-  'logger',
-  'testflight'
+    'jquery',
+    'underscore',
+    'logger',
+    'testflight'
 ], function ($,_,Logger) {
+
+    'use strict';
+
     /**
      * Sets Cordova initial configuration, checks for supported features, loads plugins.
      * @name Cordova
@@ -51,6 +54,10 @@ define([
         }
         else
             Cordova.testflight = false;
+
+        var ua = navigator.userAgent.toLowerCase();
+        Cordova.isAndroid = ua.indexOf("android") > -1;
+        Cordova.isIos = (navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false);
     };
 
     /** Log a checkpoint in the application.
