@@ -60,10 +60,9 @@ function (Logger, _, Events/*, SQLite*/) {
      * @param args array of parameters for the query.
      * @param callback a function taking an array of rows as argument.
      * @return JSON output. */
-  
+
     if (window.sqlitePlugin) {
         Database.exec = function (query, args, callback) {
-            var that = this;
             Events.trigger("database:busy");
             this.db.executeSql(query, args, function (results) {
                 var rows = results.rows;
@@ -80,11 +79,8 @@ function (Logger, _, Events/*, SQLite*/) {
     }
     else {
         Database.exec = function (query, args, callback) {
-            var that = this;
-            // Logger.log(query + " ["" + args.join("", "") + ""]", 0, 1);
             Events.trigger("database:busy");
-            // _.defer(function() {
-            that.db.transaction(function (tx) {
+            this.db.transaction(function (tx) {
                 tx.executeSql(query, args, function (tx, results) {
                     var rows = [];
                     var len = results.rows.length, i;
@@ -93,7 +89,6 @@ function (Logger, _, Events/*, SQLite*/) {
                     }
                     if (_.isFunction(callback)) {
                         callback(rows);
-                        // _.defer(callback,rows);
                     }
                     Events.trigger("database:ok");
                 },
@@ -102,7 +97,6 @@ function (Logger, _, Events/*, SQLite*/) {
                     Logger.log("WebSQL ERROR: " + error.message);
                 });
             });
-            // });
         };
     }
 
