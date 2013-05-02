@@ -104,8 +104,8 @@ sed -e '/TEMPLATES/r build/tmp/templates.js' "$JACKBONEGAP_PATH/js/templates.js.
 
 # Install platform specific libraries
 if [ "x$BUILD_IOS" = xYES ]; then
-    cp .downloads/TestFlightPlugin/www/testflight.js "$TMPJS/libs/testflight.js"
-    cp .downloads/PhoneGap-SQLitePlugin-iOS/iOS/www/SQLitePlugin.js "$TMPJS/libs/sqlite.js"
+    cp "$DOWNLOADS_PATH/TestFlightPlugin/www/testflight.js" "$TMPJS/libs/testflight.js"
+    cp "$DOWNLOADS_PATH/PhoneGap-SQLitePlugin-iOS/www/SQLitePlugin.js" "$TMPJS/libs/sqlite.js"
 else
     # Empty files, so RequireJS finds something.
     # echo > app/js/libs/cordova.js

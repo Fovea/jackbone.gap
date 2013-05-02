@@ -32,7 +32,7 @@ test -e "$TESTFILE" && cp "$TESTFILE" app/js/appdelegate.js || echo "$TESTFILE" 
 # XCode found, assume we're developing for iOS
 if test -e /Developer/Applications/Xcode.app; then
     "$JB" build ios-dev testing
-    "$JB" run
+    # "$JB" run
 fi
 
 # BlackBerry SDK found, assume we can test that to.
@@ -40,5 +40,5 @@ if test -e "/Developer/SDKs/Research In Motion/BlackBerry WebWorks SDK for Table
     # Clean BlackBerry build
     rm -fr build/blackberry
     "$JB" build blackberry-playbook testing
-    "$JB" run
+    # "$JB" run
 fi

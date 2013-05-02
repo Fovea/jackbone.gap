@@ -75,7 +75,11 @@ if [ x$BUILD_BLACKBERRY = xYES ]; then
         ID_XML="id=\"$BLACKBERRY_BUNDLE_ID\""
     fi
     VERSION=`cat $PROJECT_PATH/VERSION`
-    BUILDNUM=`cat $BLACKBERRY_PROJECT_PATH/buildId.txt|grep number|cut -d= -f2`
+    if test -e "$BLACKBERRY_PROJECT_PATH/buildId.txt"; then
+        BUILDNUM=`cat $BLACKBERRY_PROJECT_PATH/buildId.txt|grep number|cut -d= -f2`
+    else
+        BUILDNUM=0;
+    fi
     sed -i .bak "-e/\"[0-9].[0-9].[0-9].[0.9]\"/{;s/\"[0-9].[0-9].[0-9].[0.9]\"/\"$VERSION.$BUILDNUM.0\" $ID_XML/;:a" '-en;ba' '-e}' "$WWW/config.xml"
 
     # XXX

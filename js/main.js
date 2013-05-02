@@ -62,9 +62,10 @@ require([
     'cdv',
     'testing',
     'logger',
+    'sqlite',
     'appdelegate'
 ],
-function ($, _, Backbone, Jackbone, Cordova, Testing, Logger, AppDelegate) {
+function ($, _, Backbone, Jackbone, Cordova, Testing, Logger, SQLite, AppDelegate) {
 
     'use strict';
 

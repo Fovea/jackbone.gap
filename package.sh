@@ -1,5 +1,5 @@
 # PhoneGap
-PHONEGAP_VERSION="2.7.0rc1"
+PHONEGAP_VERSION="2.7.0"
 PHONEGAP_URL="https://github.com/phonegap/phonegap/archive/$PHONEGAP_VERSION.zip"
 
 # JQuery Mobile
@@ -8,7 +8,7 @@ JQUERYMOBILE_URL="http://code.jquery.com/mobile/$JQUERYMOBILE_VERSION/jquery.mob
 
 # JQuery
 # TODO: Should be in NPM, but fails for some reason
-JQUERY_JS="http://code.jquery.com/jquery-1.9.1.js"
+JQUERY_JS="http://code.jquery.com/jquery-2.0.0.js"
 
 # Kinetic JS
 KINETIC_JS="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.3.3.js"

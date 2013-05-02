@@ -20,6 +20,7 @@ define([
 
     /** Initialize Cordova Plugins. */
     Cordova.initialize = function () {
+
         if (typeof cordova !== "undefined") {
             try {
                 Cordova.testflight = cordova.require("cordova/plugin/testflightsdk");

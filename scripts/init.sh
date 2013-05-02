@@ -55,26 +55,29 @@ httpPackageZIP "https://github.com/jeromegn/Backbone.localStorage/archive/master
 
 # Download GitHub's collection of PhoneGap plugins.
 # echo "--- PhoneGap Plugins"
-# gitPackage "git://github.com/phonegap/phonegap-plugins.git"
+# gitPackage "https://github.com/phonegap/phonegap-plugins.git"
 
 if [ "x$SYSTEM" = "xDarwin" ]; then
 
     # Download a few Cordova plugins that uses Plugman
     echo "--- TestFlight"
-    gitPackage "git://github.com/j3k0/TestFlightPlugin.git"
+    gitPackage "https://github.com/j3k0/TestFlightPlugin.git"
+    # httpPackageZIP "https://github.com/j3k0/TestFlightPlugin/archive/master.zip" "$LIBS_PATH/TestFlightPlugin"
 
     echo "--- SQLite iOS"
-    gitPackage "git://github.com/j3k0/PhoneGap-SQLitePlugin-iOS.git"
+    gitPackage "https://github.com/j3k0/PhoneGap-SQLitePlugin-iOS.git"
+    # httpPackageZIP "https://github.com/j3k0/PhoneGap-SQLitePlugin-iOS/archive/master.zip" "$LIBS_PATH/SQLitePlugin-iOS"
 
     # Download Fruitstrap, a tool to upload builds to an iOS device from command line
     echo "--- Fruitstrap"
-    gitPackage "git://github.com/j3k0/fruitstrap.git"
+    gitPackage "https://github.com/j3k0/fruitstrap.git"
     ( cd "$DOWNLOADS_PATH/fruitstrap" && make fruitstrap || exit 1) || error "Fruitstrap build failed"
 fi
 
 # SQLitePlugin for Android [NOT USED]
 echo "--- SQLite Android"
-gitPackage "git://github.com/brodyspark/PhoneGap-SQLitePlugin-Android.git"
+gitPackage "https://github.com/brodyspark/PhoneGap-SQLitePlugin-Android.git"
+# httpPackageZIP "https://github.com/brodyspark/PhoneGap-SQLitePlugin-Android/archive/master.zip" "$LIBS_PATH/SQLitePlugin-Android"
 
 # XML Manipulation
 echo "--- XML Starlet"

@@ -29,7 +29,12 @@ function gitPackage {
     url="$1"
     name=`basename "$url" .git`
     if ! test -e "$DOWNLOADS_PATH/$name"; then
-        ( cd "$DOWNLOADS_PATH"; git clone "$url" || exit 1) || error "Could not download $name"
+        if test -e "$HOME/.jackbone/downloads/$name"; then
+            cp -r "$HOME/.jackbone/downloads/$name" "$DOWNLOADS_PATH/$name"
+            ( cd "$DOWNLOADS_PATH/$name"; git pull || exit 1 ) || error "Could not update $name"
+        else
+            ( cd "$DOWNLOADS_PATH"; git clone "$url" || exit 1 ) || error "Could not download $name"
+        fi
     else
         ( cd "$DOWNLOADS_PATH/$name"; git pull || exit 1) || error "Could not update $name"
     fi
@@ -44,7 +49,13 @@ function httpPackageZIP {
     file=`echo "$url"|cut -d/ -f3-|sed 's/\//-/g'`
 
     if test ! -e "$DOWNLOADS_PATH/$file" || test ! -e "$outdir"; then
-        test -e "$DOWNLOADS_PATH/$file" || wget --no-check-certificate -O "$DOWNLOADS_PATH/$file" "$url" || error "wget failed to download $url."
+        if test ! -e "$DOWNLOADS_PATH/$file"; then
+            if test -e "$HOME/.jackbone/downloads/$file"; then
+                cp "$HOME/.jackbone/downloads/$file" "$DOWNLOADS_PATH/$file"
+            else
+                wget --no-check-certificate -O "$DOWNLOADS_PATH/$file" "$url" || error "wget failed to download $url."
+            fi
+        fi
         rm -fr "$DOWNLOADS_PATH/tmp"
         mkdir -p "$DOWNLOADS_PATH/tmp"
         unzip "$DOWNLOADS_PATH/$file" -d "$DOWNLOADS_PATH/tmp/" > /dev/null || error "failed to unzip $file"
@@ -67,7 +78,13 @@ function httpPackageTGZ {
     file=`echo "$url"|cut -d/ -f3-|sed 's/\//-/g'`
 
     if test ! -e "$DOWNLOADS_PATH/$file" || test ! -e "$outdir"; then
-        test -e "$DOWNLOADS_PATH/$file" || wget --no-check-certificate -O "$DOWNLOADS_PATH/$file" "$url" || error "wget failed to download $url."
+        if test ! -e "$DOWNLOADS_PATH/$file"; then
+            if test -e "$HOME/.jackbone/downloads/$file"; then
+                cp "$HOME/.jackbone/downloads/$file" "$DOWNLOADS_PATH/$file"
+            else
+                wget --no-check-certificate -O "$DOWNLOADS_PATH/$file" "$url" || error "wget failed to download $url."
+            fi
+        fi
         rm -fr "$DOWNLOADS_PATH/tmp"
         mkdir -p "$DOWNLOADS_PATH/tmp"
         (cd "$DOWNLOADS_PATH/tmp" ; tar xzf "$DOWNLOADS_PATH/$file" || exit 1) || error "failed to extract $file"

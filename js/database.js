@@ -6,7 +6,7 @@
  * using an SQLite backend already.
  */
 /* global Backbone */
-define(["logger", "underscore", "events"/*, "sqlite"*/],
+define(["logger", "underscore", "events", "sqlite"],
 function (Logger, _, Events/*, SQLite*/) {
     "use strict";
 
@@ -33,6 +33,7 @@ function (Logger, _, Events/*, SQLite*/) {
             this.db = window.sqlitePlugin.openDatabase({name: name});
         }
         else {
+            Logger.log("SQLite Plugin Not Loaded.");
             if (window.TESTING) {
                 // Ask for 4MB of storage when testing (phantomjs fails above 5MB)
                 this.db = openDatabase(name, "1.0", "Database " + name, 4 * 1024 * 1024);
@@ -59,31 +60,51 @@ function (Logger, _, Events/*, SQLite*/) {
      * @param args array of parameters for the query.
      * @param callback a function taking an array of rows as argument.
      * @return JSON output. */
-    Database.exec = function (query, args, callback) {
-        var that = this;
-        // Logger.log(query + " ["" + args.join("", "") + ""]", 0, 1);
-        Events.trigger("database:busy");
-        // _.defer(function() {
-        that.db.transaction(function (tx) {
-            tx.executeSql(query, args, function (tx, results) {
-                var rows = [];
-                var len = results.rows.length, i;
-                for (i = 0; i < len; i++) {
-                    rows.push(results.rows.item(i));
-                }
+  
+    if (window.sqlitePlugin) {
+        Database.exec = function (query, args, callback) {
+            var that = this;
+            Events.trigger("database:busy");
+            this.db.executeSql(query, args, function (results) {
+                var rows = results.rows;
                 if (_.isFunction(callback)) {
                     callback(rows);
-                    // _.defer(callback,rows);
                 }
                 Events.trigger("database:ok");
             },
-            function (tx, error) {
+            function (error) {
                 Events.trigger("database:ko");
                 Logger.log("WebSQL ERROR: " + error.message);
             });
-        });
-        // });
-    };
+        };
+    }
+    else {
+        Database.exec = function (query, args, callback) {
+            var that = this;
+            // Logger.log(query + " ["" + args.join("", "") + ""]", 0, 1);
+            Events.trigger("database:busy");
+            // _.defer(function() {
+            that.db.transaction(function (tx) {
+                tx.executeSql(query, args, function (tx, results) {
+                    var rows = [];
+                    var len = results.rows.length, i;
+                    for (i = 0; i < len; i++) {
+                        rows.push(results.rows.item(i));
+                    }
+                    if (_.isFunction(callback)) {
+                        callback(rows);
+                        // _.defer(callback,rows);
+                    }
+                    Events.trigger("database:ok");
+                },
+                function (tx, error) {
+                    Events.trigger("database:ko");
+                    Logger.log("WebSQL ERROR: " + error.message);
+                });
+            });
+            // });
+        };
+    }
 
     /** Delete everything from the database.
      * @param callback Function called when the operation is done.

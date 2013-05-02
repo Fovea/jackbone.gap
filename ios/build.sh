@@ -17,6 +17,8 @@ if [ "x$BUILD_IOS" = "xYES" ]; then
     rm -fr "$PROJECT_PATH/build/ios"
     mkdir -p "$IOS_PROJECT_PATH"
 
+    PLUGMAN="$DOWNLOADS_PATH/node_modules/.bin/plugman"
+
     # Create PhoneGap iOS Project
     echo -n i
     "$LIBS_PATH/phonegap/lib/ios/bin/create" --shared "$IOS_PROJECT_PATH" "$IOS_BUNDLE_ID" "$PROJECT_NAME"
@@ -48,9 +50,32 @@ EOF
     if test -e "$PROJECT_PATH/ios/Info.plist"; then
         cp "$PROJECT_PATH/ios/Info.plist" "$IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist"
     fi
-    cp "$JACKBONEGAP_PATH/ios/config.xml" "$IOS_PROJECT_PATH/$PROJECT_NAME/config.xml"
+    if test -e "$PROJECT_PATH/ios/config.xml"; then
+        cp "$PROJECT_PATH/ios/config.xml" "$IOS_PROJECT_PATH/$PROJECT_NAME/config.xml"
+    fi
     cp "$JACKBONEGAP_PATH/ios/release-dev" "$IOS_PROJECT_PATH/cordova/release-dev"
     cp "$JACKBONEGAP_PATH/ios/build-dev" "$IOS_PROJECT_PATH/cordova/build-dev"
+
+    # Install Cordova Plugins.
+    cd "$PROJECT_PATH/build"
+    mkdir -p "$IOS_PROJECT_PATH/cordova/plugins"
+    "$PLUGMAN" --prepare --platform ios --project "$IOS_PROJECT_PATH"
+
+    echo -n .
+    # TODO: Some should not be installed for final distribution.
+    # INSTALL CDV TestFlight"
+
+    "$PLUGMAN" --fetch --platform ios --project "$IOS_PROJECT_PATH" --plugin "$PROJECT_PATH/.downloads/TestflightPlugin" \
+      && "$PLUGMAN" --platform ios --project "$IOS_PROJECT_PATH" --plugin "TestflightPlugin" \
+      || error "Failed to install Testflight Plugin"
+
+    echo -n .
+    # INSTALL CDV SQLite"
+    "$PLUGMAN" --fetch --platform ios --project "$IOS_PROJECT_PATH" --plugin "$PROJECT_PATH/.downloads/PhoneGap-SQLitePlugin-iOS" \
+      && "$PLUGMAN" --platform ios --project "$IOS_PROJECT_PATH" --plugin "PhoneGap-SQLitePlugin-iOS" \
+      || error "Failed to install SQLite Plugin"
+
+    cd "$PROJECT_PATH"
 
     # Generate icons and splash screens.
     echo -n .
@@ -58,19 +83,6 @@ EOF
 
     # Remove useless assets.
     rm -fr "$PROJECT_PATH/www/res"
-
-    # Install missing plugins.
-    # Note: Some will not be installed for final distribution.
-    cd "$PROJECT_PATH/build"
-    echo -n .
-    # INSTALL CDV TestFlight"
-    node "$JS_LIBS_PATH/plugman/plugman.js" --platform ios --project "$IOS_PROJECT_PATH" --plugin "$PROJECT_PATH/.downloads/TestflightPlugin" > "$EFILE" || error "Failed to install Testflight Plugin"
-
-    echo -n .
-    # INSTALL CDV SQLite"
-    node "$JS_LIBS_PATH/plugman/plugman.js" --platform ios --project "$IOS_PROJECT_PATH" --plugin "$PROJECT_PATH/.downloads/PhoneGap-SQLitePlugin-iOS/iOS" > "$EFILE" || error "Failed to install SQLite Plugin"
-    rm "$EFILE"
-    cd "$PROJECT_PATH"
 
     # Adjust the mess (lib install doesn't work... testflight.js file is unneeded)
     mkdir -p "$IOS_PROJECT_PATH/build"
