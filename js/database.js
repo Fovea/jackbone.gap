@@ -63,23 +63,24 @@ function (Logger, _, Events/*, SQLite*/) {
 
     if (window.sqlitePlugin) {
         Database.exec = function (query, args, callback) {
-            Events.trigger("database:busy");
+            // Events.trigger("database:busy");
             this.db.executeSql(query, args, function (results) {
+                console.log(JSON.stringify(results));
                 var rows = results.rows;
                 if (_.isFunction(callback)) {
                     callback(rows);
                 }
-                Events.trigger("database:ok");
+                // Events.trigger("database:ok");
             },
             function (error) {
-                Events.trigger("database:ko");
+                // Events.trigger("database:ko");
                 Logger.log("WebSQL ERROR: " + error.message);
             });
         };
     }
     else {
         Database.exec = function (query, args, callback) {
-            Events.trigger("database:busy");
+            // Events.trigger("database:busy");
             this.db.transaction(function (tx) {
                 tx.executeSql(query, args, function (tx, results) {
                     var rows = [];
@@ -90,10 +91,10 @@ function (Logger, _, Events/*, SQLite*/) {
                     if (_.isFunction(callback)) {
                         callback(rows);
                     }
-                    Events.trigger("database:ok");
+                    // Events.trigger("database:ok");
                 },
                 function (tx, error) {
-                    Events.trigger("database:ko");
+                    // Events.trigger("database:ko");
                     Logger.log("WebSQL ERROR: " + error.message);
                 });
             });

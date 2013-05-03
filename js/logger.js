@@ -177,7 +177,7 @@ define(['jquery', 'underscore', 'stacktrace', 'events'], function ($, _, Stacktr
         if (Logger.logLines.length > 2000) {
             Logger.logLines = _(Logger.logLines).last(1000);
         }
-        Events.trigger('change:logs');
+        // Events.trigger('change:logs');
     };
 
     /** Log an error into the DOM element.
@@ -192,7 +192,7 @@ define(['jquery', 'underscore', 'stacktrace', 'events'], function ($, _, Stacktr
         });
         // Logger.render();
         console.log('ERROR: ' + msg);
-        Events.trigger('change:logs');
+        // Events.trigger('change:logs');
     };
 
     /** Log stacktrace */

@@ -22,6 +22,25 @@ define([
     * <li><b> </b>(<i> </i>) <ul><li>Triggered by X when Y.</li></ul></li>
     * </ul>
     */
-    var Events = _.extend({}, Backbone.Events);
+    var Events = _.extend({
+        debug: function (state) {
+            if (state) {
+                if (!this.oldTrigger) {
+                    var t0 = (+new Date());
+                    var oldTrigger = this.oldTrigger = this.trigger;
+                    this.trigger = function (name) {
+                        console.log('[' + (+new Date() - t0) + '] event: ' + name);
+                        oldTrigger.apply(this, arguments);
+                    };
+                }
+            }
+            else {
+                if (this.oldTrigger) {
+                    this.trigger = this.oldTrigger;
+                    delete this.oldTrigger;
+                }
+            }
+        }
+    }, Backbone.Events);
     return Events;
 });
