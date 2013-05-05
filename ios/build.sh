@@ -112,13 +112,12 @@ EOF
     fi
     # Build
     if [ "x$BUILD_RELEASE" = "xYES" ]; then
-        # "$IOS_PROJECT_PATH/cordova/release$devext" | tee "$EFILE" | awk '{ if ((i = (i+1) % 16) == 0) { printf "."; fflush; } }' || error "iOS build failed"
-        echo; "$IOS_PROJECT_PATH/cordova/release$devext" | tee "$EFILE" | cut -d\  -f1-2 | grep -e CompileC -e Process -e Code -e Ld || error "iOS build failed"
+        "$IOS_PROJECT_PATH/cordova/release$devext" | tee "$EFILE" | awk '{ if ((i = (i+1) % 16) == 0) { printf "."; fflush; } }' || error "iOS build failed"
     else
-        # "$IOS_PROJECT_PATH/cordova/build$devext"  | tee "$EFILE" | awk '{ if ((i = (i+1) % 16) == 0) { printf "."; fflush; } }' || error "iOS build failed"
-        echo; "$IOS_PROJECT_PATH/cordova/build$devext" | tee "$EFILE" | cut -d\  -f1-2 | grep -e CompileC -e Process -e Code -e Ld || error "iOS build failed"
+        "$IOS_PROJECT_PATH/cordova/build$devext"  | tee "$EFILE" | awk '{ if ((i = (i+1) % 16) == 0) { printf "."; fflush; } }' || error "iOS build failed"
     fi
-    # rm "$EFILE"
+    cat "$EFILE" | grep "BUILD SUCCEEDED" > /dev/null || error "iOS build failed"
+    rm "$EFILE"
 
     echo ok
 else

@@ -5,8 +5,9 @@
 define([
     'jquery',
     'underscore',
-    'backbone'
-], function ($, _, Backbone) {
+    'backbone',
+    'logger'
+], function ($, _, Backbone, Logger) {
     'use strict';
     /** 
     * @class [events] Central Events Dispatcher.
@@ -29,7 +30,12 @@ define([
                     var t0 = (+new Date());
                     var oldTrigger = this.oldTrigger = this.trigger;
                     this.trigger = function (name) {
-                        console.log('[' + (+new Date() - t0) + '] event: ' + name);
+                        if (Logger && Logger.enabled) {
+                            Logger.log('event: ' + name);
+                        }
+                        else {
+                            console.log('[' + (+new Date() - t0) + '] event: ' + name);
+                        }
                         oldTrigger.apply(this, arguments);
                     };
                 }
