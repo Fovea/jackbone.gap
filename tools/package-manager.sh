@@ -30,10 +30,14 @@ function gitPackage {
     name=`basename "$url" .git`
     if ! test -e "$DOWNLOADS_PATH/$name"; then
         if test -e "$HOME/.jackbone/downloads/$name"; then
-            cp -r "$HOME/.jackbone/downloads/$name" "$DOWNLOADS_PATH/$name"
+            rsync --delete -av "$HOME/.jackbone/downloads/$name/" "$DOWNLOADS_PATH/$name"
             ( cd "$DOWNLOADS_PATH/$name"; git pull || exit 1 ) || error "Could not update $name"
         else
-            ( cd "$DOWNLOADS_PATH"; git clone "$url" || exit 1 ) || error "Could not download $name"
+            if test -e "$HOME/GitHub/$name"; then
+                ( cd "$DOWNLOADS_PATH"; git clone "$HOME/GitHub/$name" || exit 1 ) || error "Failed getting $name from ~/GitHub/"
+            else
+                ( cd "$DOWNLOADS_PATH"; git clone "$url" || exit 1 ) || error "Could not download $name"
+            fi
         fi
     else
         ( cd "$DOWNLOADS_PATH/$name"; git pull || exit 1) || error "Could not update $name"

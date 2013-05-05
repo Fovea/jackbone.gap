@@ -54,8 +54,8 @@ echo "--- Backbone.localStorage"
 httpPackageZIP "https://github.com/jeromegn/Backbone.localStorage/archive/master.zip" "$JS_LIBS_PATH/backbone.localstorage"
 
 # Download GitHub's collection of PhoneGap plugins.
-# echo "--- PhoneGap Plugins"
-# gitPackage "https://github.com/phonegap/phonegap-plugins.git"
+echo "--- PhoneGap Plugins"
+gitPackage "https://github.com/j3k0/phonegap-plugins.git"
 
 if [ "x$SYSTEM" = "xDarwin" ]; then
 

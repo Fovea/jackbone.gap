@@ -7,18 +7,19 @@ requirejs.config({
 
     paths: {
         // Libraries
-        jquery:       'libs/jquery/jquery',
-        underscore:   'libs/underscore/underscore',
-        backbone:     'libs/backbone/backbone',
-        jquerymobile: 'libs/jquery.mobile/jquery.mobile',
-        handlebars:   'libs/handlebars/dist/handlebars',
-        testflight:   'libs/testflight',
-        sqlite:       'libs/sqlite',
-        kinetic:      'libs/kinetic',
-        stacktrace:   'libs/stacktrace-js/stacktrace',
-        jackbone:     'libs/jackbone/jackbone',
-        kassics:      'libs/kassics/kassics',
-        k6particles:  'libs/kassics/plugins/particles'
+        jquery:        'libs/jquery/jquery',
+        underscore:    'libs/underscore/underscore',
+        backbone:      'libs/backbone/backbone',
+        jquerymobile:  'libs/jquery.mobile/jquery.mobile',
+        handlebars:    'libs/handlebars/dist/handlebars',
+        testflight:    'libs/testflight',
+        sqlite:        'libs/sqlite',
+        emailcomposer: 'libs/emailcomposer',
+        kinetic:       'libs/kinetic',
+        stacktrace:    'libs/stacktrace-js/stacktrace',
+        jackbone:      'libs/jackbone/jackbone',
+        kassics:       'libs/kassics/kassics',
+        k6particles:   'libs/kassics/plugins/particles'
     },
 
     shim: {
@@ -50,6 +51,9 @@ requirejs.config({
         },
         stacktrace: {
             exports: 'printStackTrace'
+        },
+        emailcomposer: {
+            exports: 'EmailComposer'
         }
     }
 });

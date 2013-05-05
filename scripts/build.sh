@@ -106,11 +106,13 @@ sed -e '/TEMPLATES/r build/tmp/templates.js' "$JACKBONEGAP_PATH/js/templates.js.
 if [ "x$BUILD_IOS" = xYES ]; then
     cp "$DOWNLOADS_PATH/TestFlightPlugin/www/testflight.js" "$TMPJS/libs/testflight.js"
     cp "$DOWNLOADS_PATH/PhoneGap-SQLitePlugin-iOS/www/SQLitePlugin.js" "$TMPJS/libs/sqlite.js"
+    cp "$DOWNLOADS_PATH/phonegap-plugins/iOS/EmailComposerWithAttachments/www/EmailComposer.js" "$TMPJS/libs/emailcomposer.js"
 else
     # Empty files, so RequireJS finds something.
     # echo > app/js/libs/cordova.js
     echo > "$TMPJS/libs/testflight.js"
     echo > "$TMPJS/libs/sqlite.js"
+    echo > "$TMPJS/libs/emailcomposer.js"
 fi
 
 # Copy version number to Javascript

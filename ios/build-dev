@@ -42,7 +42,7 @@ cd "$PROJECT_PATH"
 
 SDK=`xcodebuild -showsdks | grep iphoneos | tail -1 | awk '{print $4}'`
 
-xcodebuild -project $PROJECT_NAME.xcodeproj -target $PROJECT_NAME -configuration Debug -sdk $SDK clean build CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build"
+xcodebuild -IDEBuildOperationMaxNumberOfConcurrentCompileTasks=4 -project $PROJECT_NAME.xcodeproj -target $PROJECT_NAME -configuration Debug -sdk $SDK clean build CONFIGURATION_BUILD_DIR="$PROJECT_PATH/build"
 
 
 

@@ -59,28 +59,23 @@ function (Logger, _, Events/*, SQLite*/) {
      * @param query SQL query string.
      * @param args array of parameters for the query.
      * @param callback a function taking an array of rows as argument.
-     * @return JSON output. */
-
+     * @return JSON output.
+     */
     if (window.sqlitePlugin) {
         Database.exec = function (query, args, callback) {
-            // Events.trigger("database:busy");
-            this.db.executeSql(query, args, function (results) {
-                console.log(JSON.stringify(results));
+            this.db.executeSqlNow(query, args, function (results) {
                 var rows = results.rows;
-                if (_.isFunction(callback)) {
+                if (typeof callback === 'function') {
                     callback(rows);
                 }
-                // Events.trigger("database:ok");
             },
             function (error) {
-                // Events.trigger("database:ko");
                 Logger.log("WebSQL ERROR: " + error.message);
             });
         };
     }
     else {
         Database.exec = function (query, args, callback) {
-            // Events.trigger("database:busy");
             this.db.transaction(function (tx) {
                 tx.executeSql(query, args, function (tx, results) {
                     var rows = [];
@@ -88,13 +83,11 @@ function (Logger, _, Events/*, SQLite*/) {
                     for (i = 0; i < len; i++) {
                         rows.push(results.rows.item(i));
                     }
-                    if (_.isFunction(callback)) {
+                    if (typeof callback === 'function') {
                         callback(rows);
                     }
-                    // Events.trigger("database:ok");
                 },
                 function (tx, error) {
-                    // Events.trigger("database:ko");
                     Logger.log("WebSQL ERROR: " + error.message);
                 });
             });

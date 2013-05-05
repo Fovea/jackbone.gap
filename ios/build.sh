@@ -61,19 +61,21 @@ EOF
     mkdir -p "$IOS_PROJECT_PATH/cordova/plugins"
     "$PLUGMAN" --prepare --platform ios --project "$IOS_PROJECT_PATH"
 
-    echo -n .
     # TODO: Some should not be installed for final distribution.
     # INSTALL CDV TestFlight"
 
-    "$PLUGMAN" --fetch --platform ios --project "$IOS_PROJECT_PATH" --plugin "$PROJECT_PATH/.downloads/TestflightPlugin" \
-      && "$PLUGMAN" --platform ios --project "$IOS_PROJECT_PATH" --plugin "TestflightPlugin" \
-      || error "Failed to install Testflight Plugin"
+    function plugmanInstall {
+        pname="$1"
+        ppath="$2"
+        echo -n .
+        "$PLUGMAN" --fetch --platform ios --project "$IOS_PROJECT_PATH" --plugin "$PROJECT_PATH/.downloads$ppath/$pname" \
+        && "$PLUGMAN" --platform ios --project "$IOS_PROJECT_PATH" --plugin "$pname" \
+        || error "Failed to install $pname plugman plugin"
+    }
 
-    echo -n .
-    # INSTALL CDV SQLite"
-    "$PLUGMAN" --fetch --platform ios --project "$IOS_PROJECT_PATH" --plugin "$PROJECT_PATH/.downloads/PhoneGap-SQLitePlugin-iOS" \
-      && "$PLUGMAN" --platform ios --project "$IOS_PROJECT_PATH" --plugin "PhoneGap-SQLitePlugin-iOS" \
-      || error "Failed to install SQLite Plugin"
+    plugmanInstall "TestflightPlugin"
+    plugmanInstall "PhoneGap-SQLitePlugin-iOS"
+    plugmanInstall "EmailComposerWithAttachments" "/phonegap-plugins/iOS"
 
     cd "$PROJECT_PATH"
 
@@ -110,11 +112,13 @@ EOF
     fi
     # Build
     if [ "x$BUILD_RELEASE" = "xYES" ]; then
-        "$IOS_PROJECT_PATH/cordova/release$devext" | tee "$EFILE" | awk '{ if ((i = (i+1) % 16) == 0) { printf "."; fflush; } }' || error "iOS build failed"
+        # "$IOS_PROJECT_PATH/cordova/release$devext" | tee "$EFILE" | awk '{ if ((i = (i+1) % 16) == 0) { printf "."; fflush; } }' || error "iOS build failed"
+        echo; "$IOS_PROJECT_PATH/cordova/release$devext" | tee "$EFILE" | cut -d\  -f1-2 | grep -e CompileC -e Process -e Code -e Ld || error "iOS build failed"
     else
-        "$IOS_PROJECT_PATH/cordova/build$devext"  | tee "$EFILE" | awk '{ if ((i = (i+1) % 16) == 0) { printf "."; fflush; } }' || error "iOS build failed"
+        # "$IOS_PROJECT_PATH/cordova/build$devext"  | tee "$EFILE" | awk '{ if ((i = (i+1) % 16) == 0) { printf "."; fflush; } }' || error "iOS build failed"
+        echo; "$IOS_PROJECT_PATH/cordova/build$devext" | tee "$EFILE" | cut -d\  -f1-2 | grep -e CompileC -e Process -e Code -e Ld || error "iOS build failed"
     fi
-    rm "$EFILE"
+    # rm "$EFILE"
 
     echo ok
 else
