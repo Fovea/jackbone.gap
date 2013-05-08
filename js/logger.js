@@ -5,7 +5,7 @@
  */
 /* jshint nonew:false, maxstatements:32 */
 /* global SOURCE_LINES */
-define(['jquery', 'underscore', 'stacktrace', 'events'], function ($, _, Stacktrace, Events) {
+define(['jquery', 'underscore', 'stacktrace'], function ($, _, Stacktrace) {
     'use strict';
     /**
      * @name Logger
@@ -95,7 +95,8 @@ define(['jquery', 'underscore', 'stacktrace', 'events'], function ($, _, Stacktr
             var docStats = '[BODY:' + Math.floor($('body').html().length / 1000) + 'K]';
 
             if (this.vmStats) {
-                docStats = '[VIEW:' + this.vmStats.numViews + '] [CTRL:' + this.vmStats.numControllers + '] ' + docStats;
+                docStats = '[VIEW:' + this.vmStats.numViews + ']' +
+                 ' [CTRL:' + this.vmStats.numControllers + '] ' + docStats;
             }
             Logger.$statsEl.append('<div>Document ' + docStats + '</div>');
         }

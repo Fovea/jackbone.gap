@@ -76,8 +76,8 @@ function ($, _, Backbone, Jackbone, Cordova, Testing, Logger, SQLite, AppDelegat
     // When application is resumed, make sure we re-setup the current view
     // and ask client application to resume execution.
     var onResume = function () {
-        if (Jackbone.ViewManager.reSetupCurrent) {
-            Jackbone.ViewManager.reSetupCurrent();
+        if (Jackbone.reSetup) {
+            Jackbone.reSetup();
         }
         if (AppDelegate.resume) {
             AppDelegate.resume();

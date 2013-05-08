@@ -137,11 +137,11 @@ if [ "x$BUILD_RELEASE" == "xYES" ]; then
 fi
 
 echo -n J
-node app/js/libs/requirejs/bin/r.js -o name='main' baseUrl="$TMPJS" out='build/www/js/main.js' findNestedDependencies=true mainConfigFile="$TMPJS/main.js" $BUILD_JS > build/tmp/jackbone.out || error "Javascript build failed"
+node app/js/libs/requirejs/bin/r.js -o name='main' baseUrl="$TMPJS" out='build/www/js/main.js' findNestedDependencies=true mainConfigFile="$TMPJS/main.js" $BUILD_JS > "$EFILE" || error "Javascript build failed"
 echo -n a
-node app/js/libs/requirejs/bin/r.js -o cssIn=build/tmp-css/styles.css out=build/tmp/styles.less > build/tmp/jackbone.out || error "CSS build failed"
+node app/js/libs/requirejs/bin/r.js -o cssIn=build/tmp-css/styles.css out=build/tmp/styles.less > "$EFILE" || error "CSS build failed"
 echo -n c
-node app/js/libs/less/bin/lessc $LESS_OPTIONS build/tmp/styles.less build/www/css/styles.css > build/tmp/jackbone.out || error "CSS build failed"
+node app/js/libs/less/bin/lessc $LESS_OPTIONS build/tmp/styles.less build/www/css/styles.css > "$EFILE" || error "CSS build failed"
 echo -n k
 cp app/js/libs/requirejs/require.js build/www/js/require.js
 cp "$JACKBONEGAP_PATH/js/worker-helper.js" build/www/js

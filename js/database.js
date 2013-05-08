@@ -6,8 +6,8 @@
  * using an SQLite backend already.
  */
 /* global Backbone */
-define(["logger", "underscore", "events", "sqlite"],
-function (Logger, _, Events/*, SQLite*/) {
+define(["logger", "underscore", "events", "jackbone", "sqlite"],
+function (Logger, _, Events, Jackbone/*, SQLite*/) {
     "use strict";
 
     /**
@@ -18,6 +18,12 @@ function (Logger, _, Events/*, SQLite*/) {
      * @constructor
      */
     var Database = _.extend({}, Backbone.Events);
+
+    /** Set to true to log in Jackbone.profiler all SQL calls timings */
+    Database.profilingEnabled = false;
+
+    /** Set to true to log all SQL requests */
+    Database.loggingEnabled = false;
 
     /** Open a database from its name.
      *
@@ -62,33 +68,99 @@ function (Logger, _, Events/*, SQLite*/) {
      * @return JSON output.
      */
     if (window.sqlitePlugin) {
+
         Database.exec = function (query, args, callback) {
-            this.db.executeSqlNow(query, args, function (results) {
+
+            // Log the request
+            var sqlId,
+                loggingEnabled = Database.loggingEnabled;
+            if (loggingEnabled) {
+                sqlId = _.uniqueId("SQL");
+                Logger.log(sqlId + ": " + query);
+            }
+
+            // Start profiling the request.
+            var timerId,
+                profilingEnabled = Database.profilingEnabled;
+            if (profilingEnabled) {
+                timerId = Jackbone.profiler.onStart();
+            }
+
+            // Launch it in synchronous mode
+            this.db.executeSql(query, args, function (results) { /*Now*/
                 var rows = results.rows;
-                if (typeof callback === 'function') {
+
+                // Inform profiler that request is done.
+                if (profilingEnabled) {
+                    Jackbone.profiler.onEnd(timerId, query);
+                }
+
+                // Log
+                if (loggingEnabled) {
+                    Logger.log(sqlId + ": ok: " +
+                               (rows.length ? (rows.length + " rows") : ""));
+                }
+
+                // Callback
+                if (typeof callback === "function") {
                     callback(rows);
                 }
             },
             function (error) {
-                Logger.log("WebSQL ERROR: " + error.message);
+                // Some logs for the user.
+                if (Database.loggingEnabled) {
+                    Logger.log(sqlId + ": error");
+                }
+                Logger.log("SQL ERROR: " + error.message);
+                Logger.log("...query: " + query);
+                Logger.log("...args: " + JSON.stringify(args));
+
+                // Inform profiler that request is done (even if it failed).
+                if (profilingEnabled) {
+                    Jackbone.profiler.onEnd(timerId, query);
+                }
             });
         };
     }
     else {
         Database.exec = function (query, args, callback) {
+
+            // Log the request
+            var sqlId, loggingEnabled = Database.loggingEnabled;
+            if (loggingEnabled) {
+                sqlId = _.uniqueId("SQL");
+                Logger.log(sqlId + ": " + query);
+            }
+
             this.db.transaction(function (tx) {
                 tx.executeSql(query, args, function (tx, results) {
+
+                    // Load all rows in memory
                     var rows = [];
                     var len = results.rows.length, i;
                     for (i = 0; i < len; i++) {
                         rows.push(results.rows.item(i));
                     }
-                    if (typeof callback === 'function') {
+
+                    // Log success of the request
+                    if (loggingEnabled) {
+                        Logger.log(sqlId + ": ok: " +
+                                   (rows.length ? (rows.length + " rows") : ""));
+                    }
+
+                    // Callback
+                    if (typeof callback === "function") {
                         callback(rows);
                     }
                 },
                 function (tx, error) {
-                    Logger.log("WebSQL ERROR: " + error.message);
+                    // Some logs for the user.
+                    if (Database.loggingEnabled) {
+                        Logger.log(sqlId + ": error");
+                    }
+                    Logger.log("SQL ERROR: " + error.message);
+                    Logger.log("...query: " + query);
+                    Logger.log("...args: " + JSON.stringify(args));
                 });
             });
         };
@@ -108,8 +180,6 @@ function (Logger, _, Events/*, SQLite*/) {
             }
         });
     };
-
-    Database.enableSync  = true;
 
     /** Prototype for a collection using a database table */
     Database.Collection = Backbone.Collection.extend({

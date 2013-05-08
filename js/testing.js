@@ -80,12 +80,12 @@ define([
         // Overload openView and openController so we get see feedback on the console.
         var oldOpenView = Jackbone.router.openView;
         var oldOpenController = Jackbone.router.openViewController;
-        Jackbone.router.openView = function (name, C, o) {
-            console.log(name + JSON.stringify(o));
+        Jackbone.router.openView = function (args) {
+            console.log(args.name + JSON.stringify(args.options));
             oldOpenView.apply(this, arguments);
         };
-        Jackbone.router.openViewController = function (name, C, o) {
-            console.log(name + JSON.stringify(o));
+        Jackbone.router.openViewController = function (args) {
+            console.log(args.name + JSON.stringify(args.options));
             oldOpenController.apply(this, arguments);
         };
     };
