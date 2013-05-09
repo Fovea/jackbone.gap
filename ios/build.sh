@@ -107,6 +107,12 @@ EOF
         test -e "$d" && cp "$IOS_PROJECT_PATH/build/libTestFlight.a" "$d"
     done
 
+    # Add project version into the info.plist file.
+    if test -e /usr/libexec/PlistBuddy && test -e "$IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist"; then
+        VERSION=`cat "$PROJECT_PATH/VERSION"`
+        /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" "$IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist"
+    fi
+
     if [ "x$target" = "xios-dev" ]; then
         devext="-dev"
     fi
