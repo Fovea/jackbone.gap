@@ -40,7 +40,7 @@ function usage {
     echo -e "- ${T_BOLD}version${T_RESET}      Manage version number."
     echo -e "- ${T_BOLD}check${T_RESET}        Check your source files."
     echo -e "- ${T_BOLD}help${T_RESET}         Show this help message."
-    echo -e "- ${T_BOLD}upload${T_RESET}       TODO."
+    echo -e "- ${T_BOLD}upload${T_RESET}       Upload to TestFlight."
     echo
     echo -e "Type '${T_BOLD}jackbone <command> --help${T_RESET}' for more help on a specific command"
     echo
