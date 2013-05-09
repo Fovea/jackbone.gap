@@ -28,7 +28,7 @@ define([
             '*actions': 'defaultAction'
         },
         menu: function () {
-            this.openView('Menu', MenuView, {});
+            this.openView({name: 'Menu', Class: MenuView});
         }
     });
 
@@ -51,7 +51,7 @@ define([
         QUnit.asyncTest('Application initialized', function (test) {
             T.init(test);
             T.add(0, 1000, function () { Jackbone.router.goto('menu'); });
-            T.add(0,    0, function () { ok($('div[page-name=menu]').length === 1, 'Menu page exists'); }, 1);
+            T.add(0,    0, function () { ok($('#pagename-menu').length === 1, 'Menu page exists'); }, 1);
             T.add(0,    0, function () { ok($a('h1').text() === 'Menu', 'Menu page opened'); }, 1);
             T.finish();
         });
