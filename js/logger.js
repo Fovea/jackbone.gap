@@ -3,7 +3,7 @@
  * @author mr.doob / http://mrdoob.com/
  * @author Jeko
  */
-/* jshint nonew:false, maxstatements:32 */
+/* jshint nonew:false, maxstatements:33 */
 /* global SOURCE_LINES */
 define(['jquery', 'underscore', 'stacktrace'], function ($, _, Stacktrace) {
     'use strict';

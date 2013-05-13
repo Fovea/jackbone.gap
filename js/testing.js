@@ -89,7 +89,7 @@ define([
         setTimeout(function () {
             Jackbone.router.goto('testing');
             setTimeout(function () {
-                console.log("QUnit.start");
+                console.log('QUnit.start');
                 QUnit.start();
             }, 500);
         }, this.totalTime + this.t + 100);
