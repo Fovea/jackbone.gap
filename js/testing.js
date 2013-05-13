@@ -31,7 +31,8 @@ define([
 
     /** Initialize the chain. */
     TestChain.init = function (test) {
-        this.totalTime = (this.totalTime || 0) + (this.t || 0) + 1000;
+        this.totalTime = 1000;
+        // this.totalTime = (this.totalTime || 0) + (this.t || 0) + 1000;
         this.t = 2000;
         this.expected = 0;
         this.failed = false;
@@ -64,30 +65,35 @@ define([
     };
 
     TestChain.start = function () {
-        QUnit.done(function (details) {
-            console.log('QUnit.done:' + details.total +
-                        ':' + details.failed +
-                        ':' + details.passed +
-                        ':' + details.runtime);
-        });
+        // Overload openView and openController so we get see feedback on the console.
+        if (!this.overloaded) {
+            QUnit.done(function (details) {
+                console.log('QUnit.done:' + details.total +
+                            ':' + details.failed +
+                            ':' + details.passed +
+                            ':' + details.runtime);
+            });
+            var oldOpenView = Jackbone.router.openView;
+            var oldOpenController = Jackbone.router.openViewController;
+            Jackbone.router.openView = function (args) {
+                console.log(args.name + JSON.stringify(args.options));
+                oldOpenView.apply(this, arguments);
+            };
+            Jackbone.router.openViewController = function (args) {
+                console.log(args.name + JSON.stringify(args.options));
+                oldOpenController.apply(this, arguments);
+            };
+            this.overloaded = true;
+        }
+
         setTimeout(function () {
             Jackbone.router.goto('testing');
             setTimeout(function () {
+                console.log("QUnit.start");
                 QUnit.start();
             }, 500);
         }, this.totalTime + this.t + 100);
 
-        // Overload openView and openController so we get see feedback on the console.
-        var oldOpenView = Jackbone.router.openView;
-        var oldOpenController = Jackbone.router.openViewController;
-        Jackbone.router.openView = function (args) {
-            console.log(args.name + JSON.stringify(args.options));
-            oldOpenView.apply(this, arguments);
-        };
-        Jackbone.router.openViewController = function (args) {
-            console.log(args.name + JSON.stringify(args.options));
-            oldOpenController.apply(this, arguments);
-        };
     };
     return Testing;
 });
