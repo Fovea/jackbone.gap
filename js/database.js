@@ -69,7 +69,7 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
      */
     if (window.sqlitePlugin) {
 
-        Database.exec = function (query, args, callback) {
+        Database.exec = function (query, args, success, error) {
 
             // Log the request
             var sqlId,
@@ -102,16 +102,16 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
                 }
 
                 // Callback
-                if (typeof callback === "function") {
-                    callback(rows);
+                if (typeof success === "function") {
+                    success(rows);
                 }
             },
-            function (error) {
+            function (err) {
                 // Some logs for the user.
                 if (Database.loggingEnabled) {
                     Logger.log(sqlId + ": error");
                 }
-                Logger.log("SQL ERROR: " + error.message);
+                Logger.log("SQL ERROR: " + err.message);
                 Logger.log("...query: " + query);
                 Logger.log("...args: " + JSON.stringify(args));
 
@@ -119,11 +119,16 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
                 if (profilingEnabled) {
                     Jackbone.profiler.onEnd(timerId, query);
                 }
+
+                // Callback
+                if (typeof error === "function") {
+                    error(err.message);
+                }
             });
         };
     }
     else {
-        Database.exec = function (query, args, callback) {
+        Database.exec = function (query, args, success, error) {
 
             // Log the request
             var sqlId, loggingEnabled = Database.loggingEnabled;
@@ -149,18 +154,23 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
                     }
 
                     // Callback
-                    if (typeof callback === "function") {
-                        callback(rows);
+                    if (typeof success === "function") {
+                        success(rows);
                     }
                 },
-                function (tx, error) {
+                function (tx, err) {
                     // Some logs for the user.
                     if (Database.loggingEnabled) {
                         Logger.log(sqlId + ": error");
                     }
-                    Logger.log("SQL ERROR: " + error.message);
+                    Logger.log("SQL ERROR: " + err.message);
                     Logger.log("...query: " + query);
                     Logger.log("...args: " + JSON.stringify(args));
+
+                    // Callback
+                    if (typeof error === "function") {
+                        error(err.message);
+                    }
                 });
             });
         };

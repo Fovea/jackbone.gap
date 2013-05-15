@@ -43,6 +43,7 @@ end
 continue
 EOF
         STDOUT="$PROJECT_PATH/build/stdout.txt"
+        echo "$FRUITSTRAP" -b "$IOS_PROJECT_PATH/build/$PROJECT_NAME.app" -t 5 -d -x "$GDB_COMMANDS_FILE"
         "$FRUITSTRAP" -b "$IOS_PROJECT_PATH/build/$PROJECT_NAME.app" -t 5 -d -x "$GDB_COMMANDS_FILE" > "$STDOUT" 2>&1 || error "Failed to install to device"
         cat "$STDOUT"
         result=`cat "$STDOUT" | grep QUnit.done`

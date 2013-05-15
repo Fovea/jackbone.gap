@@ -48,7 +48,7 @@ function usage {
 }
 
 function checkNeededFiles() {
-    test -e "$PROJECT_PATH/config" || error "config file is missing, create one from config-sample."
+    test -e "$PROJECT_PATH/config" || error "config file is missing, create one from the provided config-sample."
     test -e "$PROJECT_PATH/assets/Default.png" || error "assets/Default.png is missing (should be a 2048x2048 image)."
     test -e "$PROJECT_PATH/assets/Icon.png" || error "assets/Icon.png is missing (should be a 2048x2048 image)."
     n=`ls -1 "$PROJECT_PATH/app/html/" | wc -l`
