@@ -73,16 +73,22 @@ define([
                             ':' + details.passed +
                             ':' + details.runtime);
             });
-            var oldOpenView = Jackbone.router.openView;
-            var oldOpenController = Jackbone.router.openViewController;
-            Jackbone.router.openView = function (args) {
-                console.log(args.name + JSON.stringify(args.options));
-                oldOpenView.apply(this, arguments);
-            };
-            Jackbone.router.openViewController = function (args) {
-                console.log(args.name + JSON.stringify(args.options));
-                oldOpenController.apply(this, arguments);
-            };
+            Jackbone.on("openview", function (view) {
+                console.log("Open view: " + view._pageUID);
+            });
+            Jackbone.on("destroyview", function (view) {
+                console.log("Destroy view: " + view._pageUID);
+            });
+            // var oldOpenView = Jackbone.router.openView;
+            // var oldOpenController = Jackbone.router.openViewController;
+            // Jackbone.router.openView = function (args) {
+            //     console.log(args.name + JSON.stringify(args.options));
+            //     oldOpenView.apply(this, arguments);
+            // };
+            // Jackbone.router.openViewController = function (args) {
+            //     console.log(args.name + JSON.stringify(args.options));
+            //     oldOpenController.apply(this, arguments);
+            // };
             this.overloaded = true;
         }
 
