@@ -19,7 +19,8 @@ requirejs.config({
         stacktrace:    'libs/stacktrace-js/stacktrace',
         jackbone:      'libs/jackbone/jackbone',
         kassics:       'libs/kassics/kassics',
-        k6particles:   'libs/kassics/plugins/particles'
+        k6particles:   'libs/kassics/plugins/particles',
+        moment:        'libs/moment/moment'
     },
 
     shim: {
