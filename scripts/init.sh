@@ -75,8 +75,8 @@ if [ "x$SYSTEM" = "xDarwin" ]; then
 fi
 
 # SQLitePlugin for Android [NOT USED]
-echo "--- SQLite Android"
-gitPackage "https://github.com/brodyspark/PhoneGap-SQLitePlugin-Android.git"
+# echo "--- SQLite Android"
+# gitPackage "https://github.com/brodyspark/PhoneGap-SQLitePlugin-Android.git"
 # httpPackageZIP "https://github.com/brodyspark/PhoneGap-SQLitePlugin-Android/archive/master.zip" "$LIBS_PATH/SQLitePlugin-Android"
 
 # XML Manipulation
