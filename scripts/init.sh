@@ -19,6 +19,13 @@ SYSTEM=`uname`
 mkdir -p "$LIBS_PATH"
 mkdir -p "$DOWNLOADS_PATH"
 
+# Give user the chance to run some code before init.
+if test -e "$PROJECT_PATH/scripts/pre-init.sh"; then
+    echo "--- Pre-Init"
+    cd "$PROJECT_PATH"
+    . "$PROJECT_PATH/scripts/pre-init.sh"
+fi
+
 # Download and install dependencies available through NPM
 echo "--- NPM Packages"
 if ! test -e "$JS_LIBS_PATH" || ! test -e "$DOWNLOADS_PATH/npmdone" || test "$JACKBONEGAP_PATH/package.json" -nt "$DOWNLOADS_PATH/npmdone"; then
@@ -40,10 +47,6 @@ httpPackageZIP "$PHONEGAP_URL" "$LIBS_PATH/phonegap"
 echo "--- JQuery.Mobile"
 httpPackageZIP "$JQUERYMOBILE_URL" "$JS_LIBS_PATH/jquery.mobile"
 cleanVersion "$JS_LIBS_PATH/jquery.mobile" "$JQUERYMOBILE_VERSION"
-
-# Download and install Kinetic
-echo "--- Kinetic"
-httpPackageJS "$KINETIC_JS" "$JS_LIBS_PATH/kinetic.js"
 
 # Download and install JQuery
 echo "--- JQuery"
@@ -84,6 +87,19 @@ echo "--- XML Starlet"
 httpPackageTGZ "http://sourceforge.net/projects/xmlstar/files/latest/download" "$LIBS_PATH/xmlstarlet"
 if test ! -e "$LIBS_PATH/xmlstarlet/xml"; then
     ( cd "$LIBS_PATH/xmlstarlet" && ./configure && make || exit 1 ) > /dev/null || error "Failed to build xmlstarlet"
+fi
+
+if test -e "$PROJECT_PATH/package.json"; then
+    echo "--- Project's NPM Packages"
+    cd "$PROJECT_PATH"
+    npm install || error "Failed to download project-specific NPM packages"
+    rsync -a node_modules/ "$JS_LIBS_PATH" || error "Failed to install project-specific NPM packages"
+fi
+
+if test -e "$PROJECT_PATH/scripts/post-init.sh"; then
+    echo "--- Post-Init"
+    cd "$PROJECT_PATH"
+    . "$PROJECT_PATH/scripts/post-init.sh"
 fi
 
 echo "--- DONE"

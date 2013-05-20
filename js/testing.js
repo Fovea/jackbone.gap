@@ -73,11 +73,11 @@ define([
                             ':' + details.passed +
                             ':' + details.runtime);
             });
-            Jackbone.on("openview", function (view) {
-                console.log("Open view: " + view._pageUID);
+            Jackbone.on('openview', function (view) {
+                console.log('Open view: ' + view._pageUID);
             });
-            Jackbone.on("destroyview", function (view) {
-                console.log("Destroy view: " + view._pageUID);
+            Jackbone.on('destroyview', function (view) {
+                console.log('Destroy view: ' + view._pageUID);
             });
             // var oldOpenView = Jackbone.router.openView;
             // var oldOpenController = Jackbone.router.openViewController;

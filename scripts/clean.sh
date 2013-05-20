@@ -14,7 +14,7 @@ function clean_more() {
 }
 
 function clean_all() {
-    rm -fr app/js/libs/ libs/ .downloads/
+    rm -fr app/js/libs/ libs/ .downloads/ node_modules/
 }
 
 cd $PROJECT_PATH

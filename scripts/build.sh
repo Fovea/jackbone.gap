@@ -137,6 +137,7 @@ if [ "x$BUILD_RELEASE" == "xYES" ]; then
 fi
 
 echo -n J
+. "$JACKBONEGAP_PATH"/tools/generate-main.sh
 node app/js/libs/requirejs/bin/r.js -o name='main' baseUrl="$TMPJS" out='build/www/js/main.js' findNestedDependencies=true mainConfigFile="$TMPJS/main.js" $BUILD_JS > "$EFILE" || error "Javascript build failed"
 echo -n a
 node app/js/libs/requirejs/bin/r.js -o cssIn=build/tmp-css/styles.css out=build/tmp/styles.less > "$EFILE" || error "CSS build failed"

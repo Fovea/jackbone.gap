@@ -1,6 +1,17 @@
-/**
- * @fileoverview View manager.
- */
+//
+// Application Delegate
+//
+// Your app's entry point.
+//
+
+requirejs.config({
+    // Declare your own here.
+    paths: {
+    },
+    shim: {
+    }
+});
+
 define([
     'jquery',
     'underscore',

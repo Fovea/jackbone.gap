@@ -13,8 +13,6 @@
         "less":          "latest",
         "jackbone":      "latest",
         "plugman":       "0.6.1",
-        "jshint":        "latest",
-        "kassics":       ">=0.0.5",
-        "moment":        "latest"
+        "jshint":        "latest"
     }
 }

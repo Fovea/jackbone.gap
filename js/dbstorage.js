@@ -14,33 +14,39 @@ define(["underscore", "backbone", "database"], function (_, Backbone, Database) 
 
     var root = this;
 
-    // Generate four random hex digits.
-    // function S4() {
-    //     return (((1 + Math.random()) * 0x10000) | 0)rtoString(16).substring(1);
-    // }
+    // UUID Generator
+    var guid = (function () {
 
-    // Fill an array of 16 bits random values.
-    var getRandomValues16;
-    var crypto = (root.crypto || {});
-    crypto.getRandomValues16 = (
-        crypto.getRandomValues ||
-        function (array) {
-            for (var i = 0; i < array.length; ++i) {
-                array[i] = (((1 + Math.random()) * 0x10000) | 0) - 0x10000;
+        // Fill an array of 16 bits random values.
+        var crypto = (root.crypto || {});
+        crypto.getRandomValues16 = (
+            crypto.getRandomValues ||
+            function (array) {
+                for (var i = 0; i < array.length; ++i) {
+                    array[i] = (((1 + Math.random()) * 0x10000) | 0) - 0x10000;
+                }
             }
+        );
+
+        function S4(array, i) {
+            return (array[i] + 0x10000).toString(16).substring(1);
         }
-    );
 
-    function S4(array,i) {
-        return (array[i] + 0x10000).toString(16).substring(1);
-    }
+        // Generate four random hex digits.
+        // function S4() {
+        //     return (((1 + Math.random()) * 0x10000) | 0)rtoString(16).substring(1);
+        // }
 
-    /** Generate a pseudo-GUID by concatenating random hexadecimal. */
-    function guid() {
-        var a = new Uint16Array(8);
-        crypto.getRandomValues16(a);
-        return (S4(a,0) + S4(a,1) + "-" + S4(a,2) + "-" + S4(a,3) + "-" + S4(a,4) + "-" + S4(a,5) + S4(a,6) + S4(a,7));
-    }
+        /** Generate a pseudo-GUID by concatenating random hexadecimal. */
+        return function () {
+            var a = new Uint16Array(8);
+            crypto.getRandomValues16(a);
+            return (S4(a, 0) + S4(a, 1) + "-" +
+                    S4(a, 2) + "-" + S4(a, 3) + "-" +
+                    S4(a, 4) + "-" + S4(a, 5) +
+                    S4(a, 6) + S4(a, 7));
+        };
+    })();
 
     /** Returns the array of values for a model.
     * @param columns Array of columns names
