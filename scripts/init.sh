@@ -93,7 +93,9 @@ if test -e "$PROJECT_PATH/package.json"; then
     echo "--- Project's NPM Packages"
     cd "$PROJECT_PATH"
     npm install || error "Failed to download project-specific NPM packages"
-    rsync -a node_modules/ "$JS_LIBS_PATH" || error "Failed to install project-specific NPM packages"
+    if test -e node_modules; then
+        rsync -a node_modules/ "$JS_LIBS_PATH" || error "Failed to install project-specific NPM packages"
+    fi
 fi
 
 if test -e "$PROJECT_PATH/scripts/post-init.sh"; then
