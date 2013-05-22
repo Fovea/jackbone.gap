@@ -69,12 +69,12 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
      */
     if (window.sqlitePlugin) {
 
-        Database.exec = function (query, args, success, error) {
+        Database.exec = function (query, args, success, error, log) {
 
             // Log the request
             var sqlId,
                 loggingEnabled = Database.loggingEnabled;
-            if (loggingEnabled) {
+            if (loggingEnabled && log !== false) {
                 sqlId = _.uniqueId("SQL");
                 Logger.log(sqlId + ": " + query);
             }
@@ -82,7 +82,7 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
             // Start profiling the request.
             var timerId,
                 profilingEnabled = Database.profilingEnabled;
-            if (profilingEnabled) {
+            if (profilingEnabled && log !== false) {
                 timerId = Jackbone.profiler.onStart();
             }
 
@@ -90,15 +90,17 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
             this.db.executeSql(query, args, function (results) { /*Now*/
                 var rows = results.rows;
 
-                // Inform profiler that request is done.
-                if (profilingEnabled) {
-                    Jackbone.profiler.onEnd(timerId, query);
-                }
+                if (log !== false) {
+                    // Inform profiler that request is done.
+                    if (profilingEnabled) {
+                        Jackbone.profiler.onEnd(timerId, query);
+                    }
 
-                // Log
-                if (loggingEnabled) {
-                    Logger.log(sqlId + ": ok: " +
-                               (rows.length ? (rows.length + " rows") : ""));
+                    // Log
+                    if (loggingEnabled) {
+                        Logger.log(sqlId + ": ok: " +
+                                    (rows.length ? (rows.length + " rows") : ""));
+                    }
                 }
 
                 // Callback
@@ -108,16 +110,18 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
             },
             function (err) {
                 // Some logs for the user.
-                if (Database.loggingEnabled) {
-                    Logger.log(sqlId + ": error");
-                }
-                Logger.log("SQL ERROR: " + err.message);
-                Logger.log("...query: " + query);
-                Logger.log("...args: " + JSON.stringify(args));
+                if (log !== false) {
+                    if (Database.loggingEnabled) {
+                        Logger.log(sqlId + ": error");
+                    }
+                    Logger.log("SQL ERROR: " + err.message);
+                    Logger.log("...query: " + query);
+                    Logger.log("...args: " + JSON.stringify(args));
 
-                // Inform profiler that request is done (even if it failed).
-                if (profilingEnabled) {
-                    Jackbone.profiler.onEnd(timerId, query);
+                    // Inform profiler that request is done (even if it failed).
+                    if (profilingEnabled) {
+                        Jackbone.profiler.onEnd(timerId, query);
+                    }
                 }
 
                 // Callback
@@ -128,11 +132,11 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
         };
     }
     else {
-        Database.exec = function (query, args, success, error) {
+        Database.exec = function (query, args, success, error, log) {
 
             // Log the request
             var sqlId, loggingEnabled = Database.loggingEnabled;
-            if (loggingEnabled) {
+            if (loggingEnabled && log !== false) {
                 sqlId = _.uniqueId("SQL");
                 Logger.log(sqlId + ": " + query);
             }
@@ -148,7 +152,7 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
                     }
 
                     // Log success of the request
-                    if (loggingEnabled) {
+                    if (loggingEnabled && log !== false) {
                         Logger.log(sqlId + ": ok: " +
                                    (rows.length ? (rows.length + " rows") : ""));
                     }
@@ -160,12 +164,14 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
                 },
                 function (tx, err) {
                     // Some logs for the user.
-                    if (Database.loggingEnabled) {
-                        Logger.log(sqlId + ": error");
+                    if (log !== false) {
+                        if (Database.loggingEnabled) {
+                            Logger.log(sqlId + ": error");
+                        }
+                        Logger.log("SQL ERROR: " + err.message);
+                        Logger.log("...query: " + query);
+                        Logger.log("...args: " + JSON.stringify(args));
                     }
-                    Logger.log("SQL ERROR: " + err.message);
-                    Logger.log("...query: " + query);
-                    Logger.log("...args: " + JSON.stringify(args));
 
                     // Callback
                     if (typeof error === "function") {

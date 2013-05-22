@@ -13,6 +13,9 @@ define(['jquery', 'underscore', 'stacktrace'], function ($, _, Stacktrace) {
      * @constructor
      */
 
+    // Publish Subscribe registry.
+    var events = $({});
+
     var Logger = {};
     var t0 = +new Date();
 
@@ -46,6 +49,13 @@ define(['jquery', 'underscore', 'stacktrace'], function ($, _, Stacktrace) {
             Logger.log(' ');
         }
         Logger.numErrors = 0;
+    };
+
+    Logger.addListener = function (fn) {
+        events.on('log', fn);
+    };
+    Logger.removeListener = function (fn) {
+        events.off('log', fn);
     };
 
     Logger.setVmStats = function (vmstats) {
@@ -185,6 +195,7 @@ define(['jquery', 'underscore', 'stacktrace'], function ($, _, Stacktrace) {
             if (Logger.logLines.length > 2000) {
                 Logger.logLines = _(Logger.logLines).last(1000);
             }
+            events.trigger('log', msg);
             // Events.trigger('change:logs');
         }
     };
