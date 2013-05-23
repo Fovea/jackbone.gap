@@ -123,6 +123,11 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
                         Jackbone.profiler.onEnd(timerId, query);
                     }
                 }
+                else {
+                    console.log("SQL ERROR: " + err.message);
+                    console.log("...query: " + query);
+                    console.log("...args: " + JSON.stringify(args));
+                }
 
                 // Callback
                 if (typeof error === "function") {
