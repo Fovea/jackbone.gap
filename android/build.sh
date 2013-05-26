@@ -38,7 +38,12 @@ if [ x$BUILD_ANDROID = xYES ]; then
     # Add version number
     V1=`echo $VERSION|cut -d. -f1`
     V2=`echo $VERSION|cut -d. -f2`
-    XMLSTARLET="$LIBS_PATH/xmlstarlet/xml"
+    if which xmlstarlet > /dev/null; then
+        XMLSTARLET=`which xmlstarlet`
+    else
+        XMLSTARLET="$LIBS_PATH/xmlstarlet/xml"
+    fi
+    test -e "$XMLSTARLET" || error "Cannot find xmlstarlet, did you run 'jackbone init'?"
     "$XMLSTARLET" ed --inplace -u "/manifest/@android:versionName" -v "$V1.$V2" "$ANDROID_PROJECT_PATH/AndroidManifest.xml"
     if [ $V1 -lt 10 ]; then V1="0$V1"; fi
     if [ $V2 -lt 10 ]; then V2="0$V1"; fi

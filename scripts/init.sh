@@ -83,10 +83,16 @@ fi
 # httpPackageZIP "https://github.com/brodyspark/PhoneGap-SQLitePlugin-Android/archive/master.zip" "$LIBS_PATH/SQLitePlugin-Android"
 
 # XML Manipulation
-echo "--- XML Starlet"
-httpPackageTGZ "http://sourceforge.net/projects/xmlstar/files/latest/download" "$LIBS_PATH/xmlstarlet"
-if test ! -e "$LIBS_PATH/xmlstarlet/xml"; then
-    ( cd "$LIBS_PATH/xmlstarlet" && ./configure && make || exit 1 ) > /dev/null || error "Failed to build xmlstarlet"
+if [ "x$BUILD_ANDROID" = "xYES" ]; then
+    echo "--- XML Starlet"
+    if which xmlstarlet > /dev/null; then
+        echo "Found `which xmlstarlet`"
+    else
+        httpPackageTGZ "http://sourceforge.net/projects/xmlstar/files/latest/download" "$LIBS_PATH/xmlstarlet"
+        if test ! -e "$LIBS_PATH/xmlstarlet/xml"; then
+            ( cd "$LIBS_PATH/xmlstarlet" && ./configure && make || exit 1 ) > /dev/null || error "Failed to build xmlstarlet"
+        fi
+    fi
 fi
 
 if test -e "$PROJECT_PATH/package.json"; then
