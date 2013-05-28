@@ -153,7 +153,7 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
                     var rows = [];
                     var len = results.rows.length, i;
                     for (i = 0; i < len; i++) {
-                        rows.push(results.rows.item(i));
+                        rows.push(_.clone(results.rows.item(i)));
                     }
 
                     // Log success of the request
