@@ -76,6 +76,9 @@ EOF
     plugmanInstall "TestflightPlugin"
     plugmanInstall "PhoneGap-SQLitePlugin-iOS"
     plugmanInstall "EmailComposerWithAttachments" "/phonegap-plugins/iOS"
+    if test -e "$PROJECT_PATH/scripts/ios-plugins.sh"; then
+        . "$PROJECT_PATH/scripts/ios-plugins.sh"
+    fi
 
     cd "$PROJECT_PATH"
 

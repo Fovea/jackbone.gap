@@ -119,7 +119,7 @@ function (Logger, _, Events, Jackbone/*, SQLite*/) {
     };
     var webSQL_exec = function (query, args, success, error, log) {
         Database.db.transaction(function (tx) {
-            webSQL_executeSql(tx, query, args, success, error, log, this);
+            webSQL_executeSql(tx, query, args, success, error, log, Database);
         });
     };
 
