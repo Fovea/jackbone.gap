@@ -31,10 +31,13 @@ function readImageSIZE() {
 function cropResize() {
     src="$1"
     dest="$2"
-    destfile="$3"
-    w=$4
-    h=$5
-    extra=$6
+    typ="$3"
+    destfile="$4"
+    w=$5
+    h=$6
+    extra=$7
+
+    destfile="`basename $destfile .png`.$typ"
 
     # Extract source image size
     readImageSIZE "$src"
@@ -92,20 +95,27 @@ function cropResize() {
 FILE=$1
 W=$2
 H=$3
+TYPE=$4
 if [ x$W = x ]; then
     echo "wrong arguments: $FILE $W $H"
     usage
+fi
+if [ x$H = xauto ]; then
+    H=""
+fi
+if [ x$TYPE != xpng ] && [ x$TYPE != xjpg ]; then
+    TYPE=png
 fi
 
 DEST=build/www
 
 SRC="assets/$FILE"
 if test -e "$SRC"; then
-    cropResize "$SRC" "$DEST" $W $H
+    cropResize "$SRC" "$DEST" "$TYPE" "$FILE" $W $H
 else
     SRC="app/img/$FILE"
     if test -e "$SRC"; then
-        cropResize "$SRC" "$DEST" "$FILE" $W $H
+        cropResize "$SRC" "$DEST" "$TYPE" "$FILE" $W $H
     else
         echo "none of assets/$FILE and app/img/$FILE exist"
         usage

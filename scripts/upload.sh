@@ -2,14 +2,15 @@
 
 function usage() {
     echo
-    echo -e "usage: ${T_BOLD}jackbone upload${T_RESET} ${T_GREEN}\"This build does this and that.\"${T_RESET}"
+    echo -e "usage: ${T_BOLD}jackbone upload${T_RESET} ${T_GREEN}<DistributionList> \"This build does this and that.\"${T_RESET}"
     echo
     echo -e "Make sur to add ${T_GREEN}TESTFLIGHT_API_TOKEN${T_RESET} and ${T_GREEN}TESTFLIGHT_TEAM_TOKEN${T_RESET} in your ${T_BOLD}config${T_RESET} file."
     echo
     exit 1
 }
 
-notes="$2"
+distribution_lists="$2"
+notes="$3"
 if [ "x$notes" = "x" ] || [ "x$note" = "xhelp" ] || [ "x$note" = "x--help" ]; then
     usage
 fi
@@ -36,8 +37,8 @@ if [ "x$BUILD_IOS" = "xYES" ] ; then
         -F api_token="$TESTFLIGHT_API_TOKEN" \
         -F team_token="$TESTFLIGHT_TEAM_TOKEN" \
         -F notes="$notes" \
-        -F notify=True \
-        -F distribution_lists='Internal'
+        -F notify=False \
+        -F distribution_lists="$distribution_lists"
     echo
 fi
 
@@ -48,7 +49,7 @@ if [ "x$BUILD_ANDROID" = "xYES" ] ; then
         -F api_token="$TESTFLIGHT_API_TOKEN" \
         -F team_token="$TESTFLIGHT_TEAM_TOKEN" \
         -F notes="$notes" \
-        -F notify=True \
-        -F distribution_lists='Internal'
+        -F notify=False \
+        -F distribution_lists="$distribution_lists"
     echo
 fi

@@ -92,7 +92,9 @@ EOF
     # Adjust the mess (lib install doesn't work... testflight.js file is unneeded)
     mkdir -p "$IOS_PROJECT_PATH/build"
     rm -fr "$IOS_PROJECT_PATH/www/testflight.js"
-    cp "$DOWNLOADS_PATH/TestflightPlugin/src/ios/libTestFlight.a" "$IOS_PROJECT_PATH/build/"
+    # cp "$DOWNLOADS_PATH/TestflightPlugin/src/ios/libTestFlight.a" "$IOS_PROJECT_PATH/build/"
+    ln -s "$DOWNLOADS_PATH"/*/src/ios/*.a "$IOS_PROJECT_PATH/build/" || true
+    ln -s "$DOWNLOADS_PATH"/*/src/ios/*.a "$IOS_PROJECT_PATH/" || true
     
     # Get default PhoneGap files
     # rsync -a build/ios/www/ ios/www
@@ -113,7 +115,10 @@ EOF
     # Add project version into the info.plist file.
     if test -e /usr/libexec/PlistBuddy && test -e "$IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist"; then
         VERSION=`cat "$PROJECT_PATH/VERSION"`
+        V1=`echo $VERSION|cut -d. -f1`
         /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" "$IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist"
+        /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $V1" "$IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist" 2> /dev/null \
+          || /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $V1" "$IOS_PROJECT_PATH/$PROJECT_NAME/$PROJECT_NAME-Info.plist"
     fi
 
     if [ "x$target" = "xios-dev" ]; then

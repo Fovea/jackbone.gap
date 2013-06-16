@@ -95,8 +95,8 @@ echo "Build date: `date`" > build/logs.txt
 rsync -a app/js/ build/tmp-js || error "Couldn't copy javascript"
 
 # Compile Handlebars Templates
-if test -x "$PROJECT_PATH/build-html.sh"; then
-    "$PROJECT_PATH/build-html.sh" || error "Custom Build HTML"
+if test -x "$PROJECT_PATH/scripts/build-html.sh"; then
+    "$PROJECT_PATH/scripts/build-html.sh" || error "Custom Build HTML"
 fi
 app/js/libs/handlebars/bin/handlebars app/html/*.html -f build/tmp/templates.js -k each -k if -k unless
 # generate templates.js module using precompiled handlebars
@@ -123,13 +123,17 @@ sed -e "s/__VERSION__/$VERSION/" "$JACKBONEGAP_PATH/js/version.js.in" | sed "s/_
 cp "$JACKBONEGAP_PATH/js/"*.js "$TMPJS/"
 
 # Prepare CSS
-if test -x "$PROJECT_PATH/build-css.sh"; then
-    "$PROJECT_PATH/build-css.sh" || error "Custom Build CSS"
+if test -x "$PROJECT_PATH/scripts/build-css.sh"; then
+    "$PROJECT_PATH/scripts/build-css.sh" || error "Custom Build CSS"
 fi
 rsync -a "$JACKBONEGAP_PATH/css/" "build/tmp-css" || error "Couldn't copy css"
 rsync -a app/css/ build/tmp-css || error "Couldn't copy css"
 cp -r "app/js/libs/jquery.mobile" "build/tmp-css/"
-cat "$JACKBONEGAP_PATH/css/styles.css" | sed "s/PLATFORM/$target/" > "build/tmp-css/styles.css"
+css_target=$target
+if [ "x$BUILD_IOS" = xYES ]; then
+    css_target="ios"
+fi
+cat "$JACKBONEGAP_PATH/css/styles.css" | sed "s/PLATFORM/$css_target/" > "build/tmp-css/styles.css"
 
 # Compile and Optimize Javascript / CSS
 if [ "x$BUILD_RELEASE" == "xYES" ]; then
@@ -176,15 +180,17 @@ echo -n e
 if [ "x$BUILD_IMAGES" != "x" ]; then
     for i in $BUILD_IMAGES; do
         FILE=`echo $i | cut -d@ -f1`
-        SIZE=`echo $i | cut -d@ -f2`
+        SIZETYPE=`echo $i | cut -d@ -f2`
+        SIZE=`echo $SIZETYPE | cut -d/ -f1`
+        TYPE=`echo $SIZETYPE | cut -d/ -f2`
         W=`echo $SIZE | cut -dx -f1`
         if echo $SIZE | grep x > /dev/null; then
             H=`echo $SIZE | cut -dx -f2`
         else
-            H=""
+            H="auto"
         fi
         echo -n .
-        "$JACKBONEGAP_PATH/tools/buildimage.sh" "$FILE" $W $H || exit "Resizing $FILE failed"
+        "$JACKBONEGAP_PATH/tools/buildimage.sh" "$FILE" $W $H "$TYPE" || exit "Resizing $FILE failed"
     done
 else
     rsync --delete -a app/img/ build/www/img || error "Could't copy images"

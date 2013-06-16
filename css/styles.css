@@ -18,3 +18,7 @@
 @import url('platforms/PLATFORM.css');
 
 @import url('functions.css');
+
+.splash-screen {
+    background-size: cover;
+}
