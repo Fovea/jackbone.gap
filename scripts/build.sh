@@ -36,6 +36,7 @@ if [ "x$3" != "x" ]; then
 elif [ "x$2" != "x" ]; then
     usage
 fi
+only="$4"
 
 if [ "x$target" = "xweb" ]; then
     BUILD_IOS=NO
@@ -72,156 +73,159 @@ fi
 echo -e "Building for target $T_GREEN$target$T_RESET, $T_GREEN$conf$T_RESET configuration."
 echo "---------------------------------------------------"
 
-# Store information about currently built configuration.
-mkdir -p build
-echo "$target $conf" > "$PROJECT_PATH/build/config"
+if [ "x$only" != "xonly" ]; then
 
-# Prepare new directories
-rm -fr ios/build
-mkdir -p build/tmp
-mkdir -p build/tmp-js
-mkdir -p build/tmp-css
-mkdir -p build/www/js
-mkdir -p build/www/css
+    # Store information about currently built configuration.
+    mkdir -p build
+    echo "$target $conf" > "$PROJECT_PATH/build/config"
 
-TMPJS=build/tmp-js
-TMPCSS=build/tmp-css
+    # Prepare new directories
+    mkdir -p build/tmp
+    mkdir -p build/tmp-js
+    mkdir -p build/tmp-css
+    mkdir -p build/www/js
+    mkdir -p build/www/css
 
-echo -e "${T_BOLD}[BUILD] build/www${T_RESET}"
+    TMPJS=build/tmp-js
+    TMPCSS=build/tmp-css
 
-echo "Build date: `date`" > build/logs.txt
+    echo -e "${T_BOLD}[BUILD] build/www${T_RESET}"
 
-# Copy all our javascript to a temporary folder
-rsync -a app/js/ build/tmp-js || error "Couldn't copy javascript"
+    echo Logfile: $EFILE
+    echo "Build date: `date`" > "$EFILE"
 
-# Compile Handlebars Templates
-if test -x "$PROJECT_PATH/scripts/build-html.sh"; then
-    "$PROJECT_PATH/scripts/build-html.sh" || error "Custom Build HTML"
+    # Copy all our javascript to a temporary folder
+    rsync -a app/js/ build/tmp-js || error "Couldn't copy javascript"
+
+    # Compile Handlebars Templates
+    if test -x "$PROJECT_PATH/scripts/build-html.sh"; then
+        "$PROJECT_PATH/scripts/build-html.sh" || error "Custom Build HTML"
+    fi
+    app/js/libs/handlebars/bin/handlebars app/html/*.html -f build/tmp/templates.js -k each -k if -k unless
+    # generate templates.js module using precompiled handlebars
+    sed -e '/TEMPLATES/r build/tmp/templates.js' "$JACKBONEGAP_PATH/js/templates.js.in" > "$TMPJS/templates.js"
+
+    # Install platform specific libraries
+    if [ "x$BUILD_IOS" = xYES ]; then
+        cp "$DOWNLOADS_PATH/TestFlightPlugin/www/testflight.js" "$TMPJS/libs/testflight.js"
+        cp "$DOWNLOADS_PATH/PhoneGap-SQLitePlugin-iOS/www/SQLitePlugin.js" "$TMPJS/libs/sqlite.js"
+        cp "$DOWNLOADS_PATH/phonegap-plugins/iOS/EmailComposerWithAttachments/www/EmailComposer.js" "$TMPJS/libs/emailcomposer.js"
+    else
+        # Empty files, so RequireJS finds something.
+        # echo > app/js/libs/cordova.js
+        echo > "$TMPJS/libs/testflight.js"
+        echo > "$TMPJS/libs/sqlite.js"
+        echo > "$TMPJS/libs/emailcomposer.js"
+    fi
+
+    # Copy version number to Javascript
+    VERSION="`cat VERSION`"
+    sed -e "s/__VERSION__/$VERSION/" "$JACKBONEGAP_PATH/js/version.js.in" | sed "s/__BUILD__/`date`/" | sed "s/__RELEASE__/$BUILD_RELEASE/" > "$TMPJS/version.js" || error "Failed to generate version.js"
+
+    # Copy Jackbone.gap JS files to Application
+    cp "$JACKBONEGAP_PATH/js/"*.js "$TMPJS/"
+
+    # Prepare CSS
+    if test -x "$PROJECT_PATH/scripts/build-css.sh"; then
+        "$PROJECT_PATH/scripts/build-css.sh" || error "Custom Build CSS"
+    fi
+    rsync -a "$JACKBONEGAP_PATH/css/" "build/tmp-css" || error "Couldn't copy css"
+    rsync -a app/css/ build/tmp-css || error "Couldn't copy css"
+    cp -r "app/js/libs/jquery.mobile" "build/tmp-css/"
+    css_target=$target
+    if [ "x$BUILD_IOS" = xYES ]; then
+        css_target="ios"
+    fi
+    cat "$JACKBONEGAP_PATH/css/styles.css" | sed "s/PLATFORM/$css_target/" > "build/tmp-css/styles.css"
+
+    # Compile and Optimize Javascript / CSS
+    if [ "x$BUILD_RELEASE" == "xYES" ]; then
+        LESS_OPTIONS="--yui-compress"
+    fi
+
+    echo -n J
+    . "$JACKBONEGAP_PATH"/tools/generate-main.sh
+    node app/js/libs/requirejs/bin/r.js -o name='main' baseUrl="$TMPJS" out='build/www/js/main.js' findNestedDependencies=true mainConfigFile="$TMPJS/main.js" $BUILD_JS  > "$EFILE" || error "Javascript build failed"
+    echo -n a
+    node app/js/libs/requirejs/bin/r.js -o cssIn=build/tmp-css/styles.css out=build/tmp/styles.less >> "$EFILE" || error "CSS build failed"
+    echo -n c
+    node app/js/libs/less/bin/lessc $LESS_OPTIONS build/tmp/styles.less build/www/css/styles.css >> "$EFILE" || error "CSS build failed"
+    echo -n k
+    cp app/js/libs/requirejs/require.js build/www/js/require.js
+    cp "$JACKBONEGAP_PATH/js/worker-helper.js" build/www/js
+    # rm -f build/tmp/jackbone.out
+    
+    # Add "main.js" lines to itself.
+    echo -n b
+    if [ "x$BUILD_RELEASE" == "xYES" ]; then
+        echo 'SOURCE_LINES = [];' >> build/www/js/main.js
+    else
+        cp build/www/js/main.js build/tmp/main.js &&\
+            cat build/tmp/main.js | sed "s/\"//g" | sed "s/'//g" | sed 's/\\//g' | tr -d '\r' |\
+            awk 'BEGIN { print "SOURCE_LINES = ["; } { printf "\"%s\",\n", $0 } END { print "\"\"];" }' >> build/www/js/main.js
+    fi
+
+    echo -n o
+    if  [ "x$BUILD_TESTING" = "xYES" ]; then
+        cp "$JACKBONEGAP_PATH/html/qunit.html" build/www/index.html
+    else
+        sed "s/PROJECT_NAME/$PROJECT_NAME/" "$JACKBONEGAP_PATH/html/index.html" > build/www/index.html
+    fi
+
+    # Install Images
+    echo -n n
+    mkdir -p build/www/img
+    if test -x "$PROJECT_PATH/build-images.sh"; then
+        "$PROJECT_PATH/build-images.sh" || error "Custom Build Images"
+    fi
+
+    echo -n e
+    if [ "x$BUILD_IMAGES" != "x" ]; then
+        for i in $BUILD_IMAGES; do
+            FILE=`echo $i | cut -d@ -f1`
+            SIZETYPE=`echo $i | cut -d@ -f2`
+            SIZE=`echo $SIZETYPE | cut -d/ -f1`
+            TYPE=`echo $SIZETYPE | cut -d/ -f2`
+            W=`echo $SIZE | cut -dx -f1`
+            if echo $SIZE | grep x > /dev/null; then
+                H=`echo $SIZE | cut -dx -f2`
+            else
+                H="auto"
+            fi
+            echo -n .
+            "$JACKBONEGAP_PATH/tools/buildimage.sh" "$FILE" $W $H "$TYPE" || exit "Resizing $FILE failed"
+        done
+    else
+        rsync --delete -a app/img/ build/www/img || error "Could't copy images"
+    fi
+
+    echo -n .
+
+    if [ x$target = xweb ]; then
+        "$JACKBONEGAP_PATH/web/generate-assets.sh"
+    fi
+
+    echo -n o
+    mkdir -p build/www/css/jquery.mobile/images
+    rsync -a app/js/libs/jquery.mobile/images/ build/www/css/jquery.mobile/images || error "Couldn't copy JQM images"
+    if [ "x$BUILD_TESTING" = "xYES" ]; then
+        mkdir -p build/www/js/libs/qunitjs/qunit
+        cp app/js/libs/qunitjs/qunit/qunit.css build/www/js/libs/qunitjs/qunit/qunit.css
+    fi
+    rm -f build/www/*.tmp
+
+    # Install Sounds
+    echo -n k
+    mkdir -p build/www/snd
+    if test -x "$PROJECT_PATH/build-sounds.sh"; then
+        "$PROJECT_PATH/build-sounds.sh" || error "Custom Build Sounds"
+    fi
+    if test -e app/snd; then
+        rsync --delete -a app/snd/ build/www/snd || error "Couldn't copy sounds"
+    fi
+
+    echo
 fi
-app/js/libs/handlebars/bin/handlebars app/html/*.html -f build/tmp/templates.js -k each -k if -k unless
-# generate templates.js module using precompiled handlebars
-sed -e '/TEMPLATES/r build/tmp/templates.js' "$JACKBONEGAP_PATH/js/templates.js.in" > "$TMPJS/templates.js"
-
-# Install platform specific libraries
-if [ "x$BUILD_IOS" = xYES ]; then
-    cp "$DOWNLOADS_PATH/TestFlightPlugin/www/testflight.js" "$TMPJS/libs/testflight.js"
-    cp "$DOWNLOADS_PATH/PhoneGap-SQLitePlugin-iOS/www/SQLitePlugin.js" "$TMPJS/libs/sqlite.js"
-    cp "$DOWNLOADS_PATH/phonegap-plugins/iOS/EmailComposerWithAttachments/www/EmailComposer.js" "$TMPJS/libs/emailcomposer.js"
-else
-    # Empty files, so RequireJS finds something.
-    # echo > app/js/libs/cordova.js
-    echo > "$TMPJS/libs/testflight.js"
-    echo > "$TMPJS/libs/sqlite.js"
-    echo > "$TMPJS/libs/emailcomposer.js"
-fi
-
-# Copy version number to Javascript
-VERSION="`cat VERSION`"
-sed -e "s/__VERSION__/$VERSION/" "$JACKBONEGAP_PATH/js/version.js.in" | sed "s/__BUILD__/`date`/" | sed "s/__RELEASE__/$BUILD_RELEASE/" > "$TMPJS/version.js" || error "Failed to generate version.js"
-
-# Copy Jackbone.gap JS files to Application
-cp "$JACKBONEGAP_PATH/js/"*.js "$TMPJS/"
-
-# Prepare CSS
-if test -x "$PROJECT_PATH/scripts/build-css.sh"; then
-    "$PROJECT_PATH/scripts/build-css.sh" || error "Custom Build CSS"
-fi
-rsync -a "$JACKBONEGAP_PATH/css/" "build/tmp-css" || error "Couldn't copy css"
-rsync -a app/css/ build/tmp-css || error "Couldn't copy css"
-cp -r "app/js/libs/jquery.mobile" "build/tmp-css/"
-css_target=$target
-if [ "x$BUILD_IOS" = xYES ]; then
-    css_target="ios"
-fi
-cat "$JACKBONEGAP_PATH/css/styles.css" | sed "s/PLATFORM/$css_target/" > "build/tmp-css/styles.css"
-
-# Compile and Optimize Javascript / CSS
-if [ "x$BUILD_RELEASE" == "xYES" ]; then
-    LESS_OPTIONS="--yui-compress"
-fi
-
-echo -n J
-. "$JACKBONEGAP_PATH"/tools/generate-main.sh
-node app/js/libs/requirejs/bin/r.js -o name='main' baseUrl="$TMPJS" out='build/www/js/main.js' findNestedDependencies=true mainConfigFile="$TMPJS/main.js" $BUILD_JS > "$EFILE" || error "Javascript build failed"
-echo -n a
-node app/js/libs/requirejs/bin/r.js -o cssIn=build/tmp-css/styles.css out=build/tmp/styles.less > "$EFILE" || error "CSS build failed"
-echo -n c
-node app/js/libs/less/bin/lessc $LESS_OPTIONS build/tmp/styles.less build/www/css/styles.css > "$EFILE" || error "CSS build failed"
-echo -n k
-cp app/js/libs/requirejs/require.js build/www/js/require.js
-cp "$JACKBONEGAP_PATH/js/worker-helper.js" build/www/js
-rm -f build/tmp/jackbone.out
- 
-# Add "main.js" lines to itself.
-echo -n b
-if [ "x$BUILD_RELEASE" == "xYES" ]; then
-    echo 'SOURCE_LINES = [];' >> build/www/js/main.js
-else
-    cp build/www/js/main.js build/tmp/main.js &&\
-        cat build/tmp/main.js | sed "s/\"//g" | sed "s/'//g" | sed 's/\\//g' | tr -d '\r' |\
-        awk 'BEGIN { print "SOURCE_LINES = ["; } { printf "\"%s\",\n", $0 } END { print "\"\"];" }' >> build/www/js/main.js
-fi
-
-echo -n o
-if  [ "x$BUILD_TESTING" = "xYES" ]; then
-    cp "$JACKBONEGAP_PATH/html/qunit.html" build/www/index.html
-else
-    sed "s/PROJECT_NAME/$PROJECT_NAME/" "$JACKBONEGAP_PATH/html/index.html" > build/www/index.html
-fi
-
-# Install Images
-echo -n n
-mkdir -p build/www/img
-if test -x "$PROJECT_PATH/build-images.sh"; then
-    "$PROJECT_PATH/build-images.sh" || error "Custom Build Images"
-fi
-
-echo -n e
-if [ "x$BUILD_IMAGES" != "x" ]; then
-    for i in $BUILD_IMAGES; do
-        FILE=`echo $i | cut -d@ -f1`
-        SIZETYPE=`echo $i | cut -d@ -f2`
-        SIZE=`echo $SIZETYPE | cut -d/ -f1`
-        TYPE=`echo $SIZETYPE | cut -d/ -f2`
-        W=`echo $SIZE | cut -dx -f1`
-        if echo $SIZE | grep x > /dev/null; then
-            H=`echo $SIZE | cut -dx -f2`
-        else
-            H="auto"
-        fi
-        echo -n .
-        "$JACKBONEGAP_PATH/tools/buildimage.sh" "$FILE" $W $H "$TYPE" || exit "Resizing $FILE failed"
-    done
-else
-    rsync --delete -a app/img/ build/www/img || error "Could't copy images"
-fi
-
-echo -n .
-
-if [ x$target = xweb ]; then
-    "$JACKBONEGAP_PATH/web/generate-assets.sh"
-fi
-
-echo -n o
-mkdir -p build/www/css/jquery.mobile/images
-rsync -a app/js/libs/jquery.mobile/images/ build/www/css/jquery.mobile/images || error "Couldn't copy JQM images"
-if [ "x$BUILD_TESTING" = "xYES" ]; then
-    mkdir -p build/www/js/libs/qunitjs/qunit
-    cp app/js/libs/qunitjs/qunit/qunit.css build/www/js/libs/qunitjs/qunit/qunit.css
-fi
-rm -f build/www/*.tmp
-
-# Install Sounds
-echo -n k
-mkdir -p build/www/snd
-if test -x "$PROJECT_PATH/build-sounds.sh"; then
-    "$PROJECT_PATH/build-sounds.sh" || error "Custom Build Sounds"
-fi
-if test -e app/snd; then
-    rsync --delete -a app/snd/ build/www/snd || error "Couldn't copy sounds"
-fi
-
-echo
 
 # Compile iOS Application
 if [ "x$BUILD_IOS" = "xYES" ]; then

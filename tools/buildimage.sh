@@ -22,7 +22,7 @@ function readImageSIZE() {
     cache_file="build/tmp/cache/$f_cache"
     if test "$f" -nt "$cache_file"; then
         mkdir -p "build/tmp/cache"
-        identify "$f" | cut -d\  -f3 > "$cache_file"
+        identify "$f" | head -1 | cut -d\  -f3 > "$cache_file"
     fi
 
     SIZE=`cat "$cache_file"`
@@ -96,6 +96,8 @@ FILE=$1
 W=$2
 H=$3
 TYPE=$4
+DEST=build/www
+
 if [ x$W = x ]; then
     echo "wrong arguments: $FILE $W $H"
     usage
@@ -103,11 +105,15 @@ fi
 if [ x$H = xauto ]; then
     H=""
 fi
-if [ x$TYPE != xpng ] && [ x$TYPE != xjpg ]; then
-    TYPE=png
+
+if [ x$TYPE = xgif ]; then
+    cp "assets/$FILE" "$DEST/img/$FILE" 2> /dev/null || cp "app/img/$FILE" "$DEST/img/$FILE"
+    exit 0
 fi
 
-DEST=build/www
+if [ x$TYPE != xpng ] && [ x$TYPE != xjpg ] && [ x$TYPE != xgif ]; then
+    TYPE=png
+fi
 
 SRC="assets/$FILE"
 if test -e "$SRC"; then

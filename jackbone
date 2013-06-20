@@ -7,6 +7,7 @@ target="$2"
 
 export PROJECT_PATH="`pwd`"
 export EFILE="$PROJECT_PATH/build/jackbone.out"
+rm -f "$EFILE"
 cd `dirname "$0"`
 export JACKBONEGAP_PATH="`pwd`"
 

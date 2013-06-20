@@ -13,6 +13,6 @@
         "less":          "latest",
         "jackbone":      "latest",
         "plugman":       "0.6.1",
-        "jshint":        "latest"
+        "jshint":        "1.1.0"
     }
 }

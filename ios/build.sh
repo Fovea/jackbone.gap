@@ -21,7 +21,7 @@ if [ "x$BUILD_IOS" = "xYES" ]; then
 
     # Create PhoneGap iOS Project
     echo -n i
-    "$LIBS_PATH/phonegap/lib/ios/bin/create" --shared "$IOS_PROJECT_PATH" "$IOS_BUNDLE_ID" "$PROJECT_NAME"
+    "$LIBS_PATH/phonegap/lib/ios/bin/create" "$IOS_PROJECT_PATH" "$IOS_BUNDLE_ID" "$PROJECT_NAME"
 
     # Patch the project.
     echo -n O
