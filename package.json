@@ -3,16 +3,16 @@
     "version": "0.0.0",
     "private": true,
     "dependencies": {
-        "underscore":    "latest",
-        "backbone":      "latest",
-        "handlebars":    "latest",
-        "requirejs":     "latest",
-        "qunitjs":       "latest",
-        "stacktrace-js": "latest",
-        "jsdoc-toolkit": "latest",
-        "less":          "latest",
-        "jackbone":      "latest",
+        "backbone":      "1.0.0",
+        "handlebars":    "1.0.12",
+        "underscore":    "1.5.1",
+        "requirejs":     "2.1.8",
+        "qunitjs":       "1.12.0",
+        "stacktrace-js": "0.5.0",
+        "jsdoc-toolkit": "0.0.2",
+        "less":          "1.4.2",
         "plugman":       "0.6.1",
-        "jshint":        "1.1.0"
+        "jshint":        "1.1.0",
+        "jackbone":      "latest"
     }
 }
