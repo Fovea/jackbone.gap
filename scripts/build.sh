@@ -202,7 +202,7 @@ if [ "x$only" != "xonly" ]; then
     echo -n .
 
     if [ x$target = xweb ]; then
-        "$JACKBONEGAP_PATH/web/generate-assets.sh"
+        "$JACKBONEGAP_PATH/web/generate-assets.sh" || error "Couldn't generate web assets"
     fi
 
     echo -n o
